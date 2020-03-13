@@ -1,4 +1,7 @@
+// flutter
 import 'package:flutter/material.dart';
+// screens
+import './screens/login.dart';
 
 void main() => runApp(MyApp());
 
@@ -6,8 +9,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: LoginScreen(),
       title: 'Flutter Demo',
       theme: ThemeData(
+        accentColor: Color.fromRGBO(29, 161, 242, 1),
+        appBarTheme: AppBarTheme(
+          brightness: Brightness.dark,
+          elevation: 0,
+        ),
+        dividerColor: Colors.grey.shade700,
         primarySwatch: MaterialColor(0xFF151F2A, {
           50: Color.fromRGBO(21, 31, 42, .1),
           100: Color.fromRGBO(21, 31, 42, .2),
@@ -31,53 +42,19 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'Roboto',
                 fontSize: 15,
               ),
+              subhead: TextStyle(
+                color: Color.fromRGBO(29, 161, 242, 1),
+                fontFamily: 'Roboto',
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+              ),
               title: TextStyle(
                 color: Colors.white,
                 fontFamily: 'Roboto',
                 fontWeight: FontWeight.w700,
+                fontSize: 26,
               ),
             ),
-        appBarTheme: AppBarTheme(
-          brightness: Brightness.dark,
-          elevation: 1,
-        ),
-        dividerColor: Colors.grey.shade200,
-      ),
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey.shade200,
-      appBar: AppBar(
-        title: Text(
-          'Fake Twitter',
-          style: Theme.of(context).textTheme.title,
-        ),
-      ),
-      body: Center(
-        child: Container(
-          color: Theme.of(context).primaryColor,
-          width: double.infinity,
-          margin: EdgeInsets.only(top: 0.2),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'This is my Fake Twitter App',
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
