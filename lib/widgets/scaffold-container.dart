@@ -1,5 +1,7 @@
 // flutter
 import 'package:flutter/material.dart';
+// helpers
+import '../helpers/colors.dart';
 
 class ScaffoldContainer extends StatelessWidget {
   final PreferredSizeWidget appBar;
@@ -16,7 +18,7 @@ class ScaffoldContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: this.appBar,
-      backgroundColor: this.appBar != null ? Colors.grey.shade700 : Theme.of(context).primaryColor,
+      backgroundColor: this.appBar != null ? ColorsHelper.lightGray : Theme.of(context).primaryColor,
       body: SafeArea(
         child: Container(
           child: this.body,
