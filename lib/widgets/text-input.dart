@@ -20,15 +20,23 @@ class TextInput extends StatefulWidget {
 
 class _TextInputState extends State<TextInput> {
   bool _contentHidden;
+  bool _hasFocus = false;
+  FocusNode _inputFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _contentHidden = widget.isPassword;
+    _inputFocus.addListener(() {
+      setState(() {
+        _hasFocus = _inputFocus.hasFocus;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final deviceSize = MediaQuery.of(context).size;
     return Column(
       children: <Widget>[
         Text(
@@ -41,7 +49,6 @@ class _TextInputState extends State<TextInput> {
         Stack(
           children: <Widget>[
             TextFormField(
-              obscureText: this._contentHidden,
               cursorColor: Theme.of(context).accentColor,
               decoration: InputDecoration(
                 enabledBorder: UnderlineInputBorder(
@@ -49,12 +56,12 @@ class _TextInputState extends State<TextInput> {
                     color: ColorsHelper.darkGray,
                   ),
                 ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Theme.of(context).accentColor,
-                    width: 2,
-                  ),
-                ),
+                // focusedBorder: UnderlineInputBorder(
+                //   borderSide: BorderSide(
+                //     color: Theme.of(context).accentColor,
+                //     width: 2,
+                //   ),
+                // ),
                 isDense: true,
                 contentPadding: EdgeInsets.only(
                   top: 8,
@@ -63,9 +70,10 @@ class _TextInputState extends State<TextInput> {
                 ),
               ),
               keyboardType: widget.keyboardType,
+              obscureText: this._contentHidden,
               style: Theme.of(context).textTheme.body2,
               textCapitalization: TextCapitalization.none,
-              maxLines: 1,
+              focusNode: _inputFocus,
             ),
             if (widget.isPassword)
               Positioned(
@@ -83,9 +91,28 @@ class _TextInputState extends State<TextInput> {
                   },
                 ),
                 right: 0,
-                top: 0,
+                top: -2,
                 height: 30,
               ),
+            AnimatedPositioned(
+              bottom: -10,
+              child: AnimatedContainer(
+                color: this._hasFocus
+                    ? ColorsHelper.lightBlue
+                    : ColorsHelper.darkGray,
+                curve: Curves.easeOut,
+                duration: Duration(
+                  milliseconds: 150,
+                ),
+                height: this._hasFocus ? 2 : 0,
+                margin: EdgeInsets.symmetric(vertical: 10),
+                width: this._hasFocus ? deviceSize.width : 10,
+              ),
+              duration: Duration(
+                milliseconds: 100,
+              ),
+              left: this._hasFocus ? 0 : deviceSize.width / 2,
+            )
           ],
         ),
       ],

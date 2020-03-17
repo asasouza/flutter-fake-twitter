@@ -45,6 +45,11 @@ class MyApp extends StatelessWidget {
                 fontWeight: FontWeight.w700,
                 fontSize: 26,
               ),
+              display1: TextStyle(
+                color: ColorsHelper.darkGray,
+                fontSize: 15,
+                fontWeight: FontWeight.normal,
+              ),
             ),
       ),
     );
