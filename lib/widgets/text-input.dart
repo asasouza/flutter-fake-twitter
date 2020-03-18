@@ -7,11 +7,15 @@ class TextInput extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final String label;
+  final Function onChanged;
+  final Function onSave;
 
   TextInput({
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.label,
+    this.onChanged,
+    this.onSave,
   });
 
   @override
@@ -71,6 +75,8 @@ class _TextInputState extends State<TextInput> {
               ),
               keyboardType: widget.keyboardType,
               obscureText: this._contentHidden,
+              onSaved: widget.onSave,
+              onChanged: widget.onChanged,
               style: Theme.of(context).textTheme.body2,
               textCapitalization: TextCapitalization.none,
               focusNode: _inputFocus,

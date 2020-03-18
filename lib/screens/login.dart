@@ -1,5 +1,6 @@
 // flutter
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // widgets
 import '../widgets/button-rounded.dart';
 import '../widgets/logo.dart';
@@ -7,6 +8,8 @@ import '../widgets/scaffold-container.dart';
 import '../widgets/text-input.dart';
 // helpers
 import '../helpers/colors.dart';
+// providers
+import '../providers/auth.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -14,6 +17,36 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  GlobalKey<FormState> _formKey = GlobalKey();
+  Map<String, String> _loginData = {'email': '', 'password': ''};
+  bool _isValid = false;
+  bool _isLoading = false;
+
+  void _saveInputValue(String input, dynamic value) {
+    _loginData[input] = value;
+
+    setState(() {
+      _isValid = _loginData['email'] != '' && _loginData['password'] != '';
+    });
+  }
+
+  void _onSubmit() {
+    // this._formKey.currentState.save();
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<AuthProvider>(context, listen: false)
+        .login(
+          _loginData['email'],
+          _loginData['password'],
+        )
+        .then((_) {
+          setState(() {
+            _isLoading = false;
+          });
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldContainer(
@@ -29,80 +62,111 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
         title: Logo(),
       ),
-      body: Column(
+      body: Stack(
         children: <Widget>[
-          Expanded(
-            child: Padding(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Text(
-                    'Log in to Twitter.',
-                    style: Theme.of(context).textTheme.title,
-                  ),
-                  SizedBox(
-                    height: 25,
-                  ),
-                  Form(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        TextInput(
-                          keyboardType: TextInputType.emailAddress,
-                          label: 'Email or username',
-                        ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        TextInput(
-                          isPassword: true,
-                          keyboardType: TextInputType.visiblePassword,
-                          label: 'Password',
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Center(
-                          child: FlatButton(
-                            child: Text(
-                              'Forgot password?',
-                              style: Theme.of(context).textTheme.display1,
+          Column(
+            children: <Widget>[
+              Expanded(
+                child: Padding(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Text(
+                        'Log in to Twitter.',
+                        style: Theme.of(context).textTheme.title,
+                      ),
+                      SizedBox(
+                        height: 25,
+                      ),
+                      Form(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            TextInput(
+                              keyboardType: TextInputType.emailAddress,
+                              label: 'Email or username',
+                              onChanged: (value) =>
+                                  this._saveInputValue('email', value),
                             ),
-                            onPressed: () {},
-                          ),
+                            SizedBox(
+                              height: 20,
+                            ),
+                            TextInput(
+                              isPassword: true,
+                              keyboardType: TextInputType.visiblePassword,
+                              label: 'Password',
+                              onChanged: (value) =>
+                                  this._saveInputValue('password', value),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Center(
+                              child: FlatButton(
+                                child: Text(
+                                  'Forgot password?',
+                                  style: Theme.of(context).textTheme.display1,
+                                ),
+                                onPressed: () {},
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              padding: EdgeInsets.symmetric(
-                horizontal: 15,
-                vertical: 15,
-              ),
-            ),
-          ),
-          Container(
-            alignment: Alignment.centerRight,
-            child: SizedBox(
-              child: ButtonRounded(
-                disabled: false,
-                label: 'Log in',
-                onPress: () {},
-              ),
-              width: 80,
-            ),
-            decoration: BoxDecoration(
-              border: Border(
-                top: BorderSide(
-                  color: ColorsHelper.darkGray,
+                        key: this._formKey,
+                      )
+                    ],
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 15,
+                    vertical: 15,
+                  ),
                 ),
               ),
-            ),
-            padding: EdgeInsets.all(10),
-            width: double.infinity,
+              Container(
+                alignment: Alignment.centerRight,
+                child: SizedBox(
+                  child: ButtonRounded(
+                    disabled: !this._isValid,
+                    label: 'Log in',
+                    onPress: this._onSubmit,
+                  ),
+                  width: 80,
+                ),
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: ColorsHelper.darkGray,
+                    ),
+                  ),
+                ),
+                padding: EdgeInsets.all(10),
+                width: double.infinity,
+              ),
+            ],
           ),
         ],
+      ),
+      showModal: this._isLoading,
+      modalBody: Center(
+        child: Container(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              SizedBox(
+                width: 40,
+              ),
+              Text(
+                'Logging in...',
+                style: Theme.of(context).textTheme.body1,
+              ),
+            ],
+          ),
+          color: ColorsHelper.darkBlue,
+          padding: EdgeInsets.all(20),
+          width: 200,
+        ),
       ),
       topDivider: false,
     );
