@@ -4,17 +4,25 @@ import 'package:flutter/material.dart';
 import '../helpers/colors.dart';
 
 class TextInput extends StatefulWidget {
+  final TextEditingController controller;
+  final FocusNode focusNode;
   final bool isPassword;
   final TextInputType keyboardType;
   final String label;
   final Function onChanged;
+  final Function onFieldSubmitted;
   final Function onSave;
+  final TextInputAction textInputAction;
 
   TextInput({
+    this.controller,
+    this.focusNode,
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.label,
+    this.textInputAction,
     this.onChanged,
+    this.onFieldSubmitted,
     this.onSave,
   });
 
@@ -25,17 +33,24 @@ class TextInput extends StatefulWidget {
 class _TextInputState extends State<TextInput> {
   bool _contentHidden;
   bool _hasFocus = false;
-  FocusNode _inputFocus = FocusNode();
+  FocusNode _inputFocus;
 
   @override
   void initState() {
     super.initState();
     _contentHidden = widget.isPassword;
+    _inputFocus = widget.focusNode != null ? widget.focusNode : FocusNode();
     _inputFocus.addListener(() {
       setState(() {
         _hasFocus = _inputFocus.hasFocus;
       });
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _inputFocus.dispose();
   }
 
   @override
@@ -53,6 +68,7 @@ class _TextInputState extends State<TextInput> {
         Stack(
           children: <Widget>[
             TextFormField(
+              controller: widget.controller,
               cursorColor: Theme.of(context).accentColor,
               decoration: InputDecoration(
                 enabledBorder: UnderlineInputBorder(
@@ -60,12 +76,6 @@ class _TextInputState extends State<TextInput> {
                     color: ColorsHelper.darkGray,
                   ),
                 ),
-                // focusedBorder: UnderlineInputBorder(
-                //   borderSide: BorderSide(
-                //     color: Theme.of(context).accentColor,
-                //     width: 2,
-                //   ),
-                // ),
                 isDense: true,
                 contentPadding: EdgeInsets.only(
                   top: 8,
@@ -73,13 +83,15 @@ class _TextInputState extends State<TextInput> {
                   right: widget.isPassword ? 45 : 0,
                 ),
               ),
+              focusNode: this._inputFocus,
               keyboardType: widget.keyboardType,
               obscureText: this._contentHidden,
-              onSaved: widget.onSave,
               onChanged: widget.onChanged,
+              onSaved: widget.onSave,
+              onFieldSubmitted: widget.onFieldSubmitted,
               style: Theme.of(context).textTheme.body2,
               textCapitalization: TextCapitalization.none,
-              focusNode: _inputFocus,
+              textInputAction: widget.textInputAction,
             ),
             if (widget.isPassword)
               Positioned(

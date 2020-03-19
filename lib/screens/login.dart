@@ -21,6 +21,14 @@ class _LoginScreenState extends State<LoginScreen> {
   Map<String, String> _loginData = {'email': '', 'password': ''};
   bool _isValid = false;
   bool _isLoading = false;
+  final _passwordFocus = FocusNode();
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    _passwordFocus.dispose();
+  }
 
   void _saveInputValue(String input, dynamic value) {
     _loginData[input] = value;
@@ -31,20 +39,20 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void _onSubmit() {
-    // this._formKey.currentState.save();
+    FocusScope.of(context).unfocus();
     setState(() {
       _isLoading = true;
     });
     Provider.of<AuthProvider>(context, listen: false)
         .login(
-          _loginData['email'],
-          _loginData['password'],
-        )
+      _loginData['email'],
+      _loginData['password'],
+    )
         .then((_) {
-          setState(() {
-            _isLoading = false;
-          });
-        });
+      setState(() {
+        _isLoading = false;
+      });
+    });
   }
 
   @override
@@ -87,16 +95,22 @@ class _LoginScreenState extends State<LoginScreen> {
                               label: 'Email or username',
                               onChanged: (value) =>
                                   this._saveInputValue('email', value),
+                              onFieldSubmitted: (_) =>
+                                  _passwordFocus.requestFocus(),
+                              textInputAction: TextInputAction.next,
                             ),
                             SizedBox(
                               height: 20,
                             ),
                             TextInput(
+                              focusNode: _passwordFocus,
                               isPassword: true,
                               keyboardType: TextInputType.visiblePassword,
                               label: 'Password',
                               onChanged: (value) =>
                                   this._saveInputValue('password', value),
+                              onFieldSubmitted: (_) => this._onSubmit(),
+                              textInputAction: TextInputAction.done,
                             ),
                             SizedBox(
                               height: 10,
