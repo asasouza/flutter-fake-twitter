@@ -9,9 +9,11 @@ class TextInput extends StatefulWidget {
   final bool isPassword;
   final TextInputType keyboardType;
   final String label;
+  final int maxLength;
   final Function onChanged;
   final Function onFieldSubmitted;
   final Function onSave;
+  final String placeholder;
   final TextInputAction textInputAction;
 
   TextInput({
@@ -20,10 +22,12 @@ class TextInput extends StatefulWidget {
     this.isPassword = false,
     this.keyboardType = TextInputType.text,
     this.label,
-    this.textInputAction,
+    this.maxLength,
     this.onChanged,
     this.onFieldSubmitted,
     this.onSave,
+    this.placeholder,
+    this.textInputAction,
   });
 
   @override
@@ -58,13 +62,14 @@ class _TextInputState extends State<TextInput> {
     final deviceSize = MediaQuery.of(context).size;
     return Column(
       children: <Widget>[
-        Text(
-          widget.label,
-          style: TextStyle(
-            color: ColorsHelper.darkGray,
-            fontSize: 16,
+        if (widget.label != null)
+          Text(
+            widget.label,
+            style: TextStyle(
+              color: ColorsHelper.darkGray,
+              fontSize: 16,
+            ),
           ),
-        ),
         Stack(
           children: <Widget>[
             TextFormField(
@@ -76,6 +81,11 @@ class _TextInputState extends State<TextInput> {
                     color: ColorsHelper.darkGray,
                   ),
                 ),
+                hintText: widget.placeholder,
+                hintStyle: TextStyle(
+                  fontSize: 18,
+                  color: ColorsHelper.darkGray,
+                ),
                 isDense: true,
                 contentPadding: EdgeInsets.only(
                   top: 8,
@@ -86,6 +96,8 @@ class _TextInputState extends State<TextInput> {
               focusNode: this._inputFocus,
               keyboardType: widget.keyboardType,
               obscureText: this._contentHidden,
+              // maxLength: widget.maxLength,
+              // maxLengthEnforced: true,
               onChanged: widget.onChanged,
               onSaved: widget.onSave,
               onFieldSubmitted: widget.onFieldSubmitted,
@@ -133,6 +145,20 @@ class _TextInputState extends State<TextInput> {
             )
           ],
         ),
+        if (widget.maxLength != null)
+          Container(
+            alignment: Alignment.centerRight,
+            child: Text(
+              widget.maxLength.toString(),
+              style: TextStyle(
+                color: ColorsHelper.darkGray,
+                fontSize: 16,
+              ),
+            ),
+            margin: EdgeInsetsDirectional.only(
+              top: 5,
+            ),
+          ),
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
     );

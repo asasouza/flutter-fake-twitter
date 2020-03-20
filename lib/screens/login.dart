@@ -6,6 +6,8 @@ import '../widgets/button-rounded.dart';
 import '../widgets/logo.dart';
 import '../widgets/scaffold-container.dart';
 import '../widgets/text-input.dart';
+// screens
+import '../screens/signup.dart';
 // helpers
 import '../helpers/colors.dart';
 // providers
@@ -65,7 +67,9 @@ class _LoginScreenState extends State<LoginScreen> {
               'Sign up',
               style: Theme.of(context).textTheme.subhead,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushNamed(SignupScreen.routeName);
+            },
           ),
         ],
         title: Logo(),

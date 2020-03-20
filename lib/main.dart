@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // screens
 import './screens/login.dart';
+import './screens/signup.dart';
 // helpers
 import './helpers/colors.dart';
 
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         home: LoginScreen(),
+        routes: {
+          SignupScreen.routeName: (_) => SignupScreen(),
+        },
         title: 'Flutter Demo',
         theme: ThemeData(
           accentColor: ColorsHelper.lightBlue,

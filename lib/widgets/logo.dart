@@ -8,8 +8,8 @@ class Logo extends StatelessWidget {
   final double width;
 
   Logo({
-    this.height = 50,
-    this.width = 50,
+    this.height = 40,
+    this.width = 40,
   });
 
   @override
