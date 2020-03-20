@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               textInputAction: TextInputAction.next,
                             ),
                             SizedBox(
-                              height: 20,
+                              height: 5,
                             ),
                             TextInput(
                               focusNode: _passwordFocus,

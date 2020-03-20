@@ -76,6 +76,10 @@ class ColorsHelper {
     });
   }
 
+  static MaterialColor get red {
+    return Colors.red;
+  }
+
   static Color get white {
     return Colors.white;
   }

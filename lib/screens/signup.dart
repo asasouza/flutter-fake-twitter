@@ -24,24 +24,32 @@ class SignupScreen extends StatelessWidget {
       ),
       body: Column(
         children: <Widget>[
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            'Create your account',
+            style: TextStyle(
+              fontSize: 32,
+              letterSpacing: 1.5,
+              fontWeight: FontWeight.bold,
+              color: ColorsHelper.white,
+            ),
+          ),
           Expanded(
             child: Padding(
               child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'Create your account',
-                    style: TextStyle(
-                      fontSize: 35,
-                      fontWeight: FontWeight.bold,
-                      color: ColorsHelper.white,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
                   TextInput(
                     placeholder: 'Username',
-                    maxLength: 50,
+                    maxLength: 3,
+                    validator: (value) {
+                      if (value.length > 3) {
+                        return 'Must be 50 characters or fewer';
+                      }
+                      return null;
+                    },
                   ),
                   SizedBox(
                     height: 40,
@@ -53,7 +61,6 @@ class SignupScreen extends StatelessWidget {
               ),
               padding: EdgeInsets.symmetric(
                 horizontal: 47,
-                vertical: 20,
               ),
             ),
           ),

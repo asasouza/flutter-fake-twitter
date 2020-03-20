@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 // helper
 import '../helpers/colors.dart';
+import '../helpers/debounce.dart';
 
 class TextInput extends StatefulWidget {
   final TextEditingController controller;
@@ -15,6 +16,7 @@ class TextInput extends StatefulWidget {
   final Function onSave;
   final String placeholder;
   final TextInputAction textInputAction;
+  final Function validator;
 
   TextInput({
     this.controller,
@@ -28,6 +30,7 @@ class TextInput extends StatefulWidget {
     this.onSave,
     this.placeholder,
     this.textInputAction,
+    this.validator,
   });
 
   @override
@@ -37,7 +40,9 @@ class TextInput extends StatefulWidget {
 class _TextInputState extends State<TextInput> {
   bool _contentHidden;
   bool _hasFocus = false;
+  String _isValid;
   FocusNode _inputFocus;
+  DebounceHelper debounce = DebounceHelper();
 
   @override
   void initState() {
@@ -57,6 +62,37 @@ class _TextInputState extends State<TextInput> {
     _inputFocus.dispose();
   }
 
+  MaterialColor get _borderColor {
+    if (_isValid != null) {
+      return ColorsHelper.red;
+    }
+    if (_hasFocus) {
+      return ColorsHelper.lightBlue;
+    }
+    return ColorsHelper.darkGray;
+  }
+
+  double get _contentPadding {
+    // if(widget.isPassword && widget.validator != null && _isValid == null) {
+    //   return 90;
+    // }
+    if(widget.isPassword || (widget.validator != null && _isValid == null)) {
+      return 45;
+    }
+    return 0;
+  }
+
+  void _onChanged(String value) {
+    if (widget.validator != null) {
+      debounce.run(500, () {
+        setState(() {
+          _isValid = widget.validator(value);
+        });
+      });
+    }
+    widget.onChanged(value);
+  }
+
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.of(context).size;
@@ -73,6 +109,25 @@ class _TextInputState extends State<TextInput> {
         Stack(
           children: <Widget>[
             TextFormField(
+              buildCounter: (
+                BuildContext context, {
+                int currentLength,
+                int maxLength = 0,
+                bool isFocused,
+              }) {
+                return Text(
+                  widget.maxLength != null
+                      ? (maxLength - currentLength).toString()
+                      : '',
+                  style: TextStyle(
+                    color: widget.maxLength != null &&
+                            (maxLength - currentLength) < 0
+                        ? ColorsHelper.red.shade800
+                        : ColorsHelper.darkGray,
+                    fontSize: 16,
+                  ),
+                );
+              },
               controller: widget.controller,
               cursorColor: Theme.of(context).accentColor,
               decoration: InputDecoration(
@@ -81,6 +136,19 @@ class _TextInputState extends State<TextInput> {
                     color: ColorsHelper.darkGray,
                   ),
                 ),
+                errorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(
+                    color: ColorsHelper.red,
+                  ),
+                ),
+                focusedErrorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(width: 0),
+                ),
+                errorStyle: TextStyle(
+                  color: ColorsHelper.red.shade800,
+                  fontSize: 15,
+                ),
+                errorText: this._isValid,
                 hintText: widget.placeholder,
                 hintStyle: TextStyle(
                   fontSize: 18,
@@ -90,46 +158,55 @@ class _TextInputState extends State<TextInput> {
                 contentPadding: EdgeInsets.only(
                   top: 8,
                   bottom: 7,
-                  right: widget.isPassword ? 45 : 0,
+                  right: this._contentPadding,
                 ),
               ),
               focusNode: this._inputFocus,
               keyboardType: widget.keyboardType,
               obscureText: this._contentHidden,
-              // maxLength: widget.maxLength,
-              // maxLengthEnforced: true,
-              onChanged: widget.onChanged,
+              maxLength: widget.maxLength,
+              maxLengthEnforced: false,
+              onChanged: this._onChanged,
               onSaved: widget.onSave,
               onFieldSubmitted: widget.onFieldSubmitted,
               style: Theme.of(context).textTheme.body2,
               textCapitalization: TextCapitalization.none,
               textInputAction: widget.textInputAction,
             ),
-            if (widget.isPassword)
-              Positioned(
-                child: IconButton(
-                  color: this._contentHidden
-                      ? ColorsHelper.darkGray
-                      : ColorsHelper.lightBlue,
-                  icon: Icon(this._contentHidden
-                      ? Icons.lock_outline
-                      : Icons.lock_open),
-                  onPressed: () {
-                    setState(() {
-                      this._contentHidden = !this._contentHidden;
-                    });
-                  },
-                ),
-                right: 0,
-                top: -2,
-                height: 30,
+            Positioned(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  if (widget.isPassword)
+                    IconButton(
+                      color: this._contentHidden
+                          ? ColorsHelper.darkGray
+                          : ColorsHelper.lightBlue,
+                      icon: Icon(this._contentHidden
+                          ? Icons.lock_outline
+                          : Icons.lock_open),
+                      onPressed: () {
+                        setState(() {
+                          this._contentHidden = !this._contentHidden;
+                        });
+                      },
+                    ),
+                  if (widget.validator != null && this._isValid == null)
+                    Icon(
+                      Icons.check_circle_outline,
+                      color: Colors.green.shade800,
+                      size: 22,
+                    ),
+                ],
               ),
+              right: 0,
+              top: -2,
+              height: 30,
+            ),
             AnimatedPositioned(
-              bottom: -10,
+              bottom: 15,
               child: AnimatedContainer(
-                color: this._hasFocus
-                    ? ColorsHelper.lightBlue
-                    : ColorsHelper.darkGray,
+                color: this._borderColor,
                 curve: Curves.easeOut,
                 duration: Duration(
                   milliseconds: 150,
@@ -145,20 +222,6 @@ class _TextInputState extends State<TextInput> {
             )
           ],
         ),
-        if (widget.maxLength != null)
-          Container(
-            alignment: Alignment.centerRight,
-            child: Text(
-              widget.maxLength.toString(),
-              style: TextStyle(
-                color: ColorsHelper.darkGray,
-                fontSize: 16,
-              ),
-            ),
-            margin: EdgeInsetsDirectional.only(
-              top: 5,
-            ),
-          ),
       ],
       crossAxisAlignment: CrossAxisAlignment.start,
     );
