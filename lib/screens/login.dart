@@ -20,7 +20,10 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  Map<String, String> _loginData = {'email': '', 'password': ''};
+  Map<String, String> _loginData = {
+    'email': '',
+    'password': '',
+  };
   bool _isValid = false;
   bool _isLoading = false;
   final _passwordFocus = FocusNode();

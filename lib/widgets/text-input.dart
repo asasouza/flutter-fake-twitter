@@ -72,21 +72,12 @@ class _TextInputState extends State<TextInput> {
     return ColorsHelper.darkGray;
   }
 
-  double get _contentPadding {
-    // if(widget.isPassword && widget.validator != null && _isValid == null) {
-    //   return 90;
-    // }
-    if(widget.isPassword || (widget.validator != null && _isValid == null)) {
-      return 45;
-    }
-    return 0;
-  }
-
   void _onChanged(String value) {
     if (widget.validator != null) {
-      debounce.run(500, () {
+      debounce.run(500, () async {
+        final error = await widget.validator(value);
         setState(() {
-          _isValid = widget.validator(value);
+          _isValid = error;
         });
       });
     }
@@ -158,7 +149,7 @@ class _TextInputState extends State<TextInput> {
                 contentPadding: EdgeInsets.only(
                   top: 8,
                   bottom: 7,
-                  right: this._contentPadding,
+                  right: widget.isPassword ? 45 : 0,
                 ),
               ),
               focusNode: this._inputFocus,
@@ -190,12 +181,6 @@ class _TextInputState extends State<TextInput> {
                           this._contentHidden = !this._contentHidden;
                         });
                       },
-                    ),
-                  if (widget.validator != null && this._isValid == null)
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: Colors.green.shade800,
-                      size: 22,
                     ),
                 ],
               ),
