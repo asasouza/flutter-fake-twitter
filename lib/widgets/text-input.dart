@@ -40,6 +40,7 @@ class TextInput extends StatefulWidget {
 class _TextInputState extends State<TextInput> {
   bool _contentHidden;
   bool _hasFocus = false;
+  bool _isValidating = false;
   String _isValid;
   FocusNode _inputFocus;
   DebounceHelper debounce = DebounceHelper();
@@ -75,9 +76,13 @@ class _TextInputState extends State<TextInput> {
   void _onChanged(String value) {
     if (widget.validator != null) {
       debounce.run(500, () async {
+        setState(() {
+          _isValidating = true;
+        });
         final error = await widget.validator(value);
         setState(() {
           _isValid = error;
+          _isValidating = false;
         });
       });
     }
@@ -122,6 +127,11 @@ class _TextInputState extends State<TextInput> {
               controller: widget.controller,
               cursorColor: Theme.of(context).accentColor,
               decoration: InputDecoration(
+                contentPadding: EdgeInsets.only(
+                  bottom: 7,
+                  right: widget.isPassword ? 45 : 0,
+                  top: 8,
+                ),
                 enabledBorder: UnderlineInputBorder(
                   borderSide: BorderSide(
                     color: ColorsHelper.darkGray,
@@ -132,25 +142,32 @@ class _TextInputState extends State<TextInput> {
                     color: ColorsHelper.red,
                   ),
                 ),
-                focusedErrorBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(width: 0),
-                ),
                 errorStyle: TextStyle(
                   color: ColorsHelper.red.shade800,
                   fontSize: 15,
                 ),
                 errorText: this._isValid,
+                focusedErrorBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(width: 0),
+                ),
                 hintText: widget.placeholder,
                 hintStyle: TextStyle(
-                  fontSize: 18,
                   color: ColorsHelper.darkGray,
+                  fontSize: 18,
                 ),
                 isDense: true,
-                contentPadding: EdgeInsets.only(
-                  top: 8,
-                  bottom: 7,
-                  right: widget.isPassword ? 45 : 0,
-                ),
+                suffix: this._isValidating
+                    ? Container(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
+                        height: 15,
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 3,
+                        ),
+                        width: 15,
+                      )
+                    : null,
               ),
               focusNode: this._inputFocus,
               keyboardType: widget.keyboardType,
@@ -168,7 +185,7 @@ class _TextInputState extends State<TextInput> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
-                  if (widget.isPassword)
+                  if (widget.isPassword && !this._isValidating)
                     IconButton(
                       color: this._contentHidden
                           ? ColorsHelper.darkGray

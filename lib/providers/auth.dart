@@ -24,7 +24,13 @@ class AuthProvider extends ChangeNotifier {
 
   Future<String> isValidEmail(String email) async {
     return await Future.delayed(Duration(seconds: 2), () {
-      return 'Invalid email';
+      return null;
+    });
+  }
+
+  Future<String> isValidUsername(String username) async {
+    return await Future.delayed(Duration(seconds: 2), () {
+      return null;
     });
   }
 }

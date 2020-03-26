@@ -20,12 +20,18 @@ class SignupScreen extends StatefulWidget {
 
 class _SignupScreenState extends State<SignupScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  Map<String, String> _loginData = {
-    'username': '',
-    'password': '',
+  Map<String, Map<String, dynamic>> _loginData = {
+    'username': {
+      'isValid': false,
+      'value': '',
+    },
+    'email': {
+      'isValid': false,
+      'value': '',
+    },
   };
-  bool _isValid = false;
   bool _isLoading = false;
+  bool _isValid = false;
   final _emailFocus = FocusNode();
 
   @override
@@ -36,15 +42,17 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void _saveInputValue(String input, dynamic value) {
-    _loginData[input] = value;
-
+    _loginData[input]['value'] = value;
+    print(_loginData['email']['isValid']);
+    print(_loginData['username']['isValid']);
     setState(() {
-      _isValid = true;
+      _isValid =
+          _loginData['email']['isValid'] && _loginData['username']['isValid'];
     });
   }
 
   void _onSubmit() {
-    print('Submit');
+    print(_loginData);
   }
 
   @override
@@ -85,11 +93,10 @@ class _SignupScreenState extends State<SignupScreen> {
                           this._saveInputValue('username', value),
                       onFieldSubmitted: (_) => this._emailFocus.requestFocus(),
                       placeholder: 'Username',
-                      validator: (value) {
-                        if (value.length > 50) {
-                          return 'Must be 50 characters or fewer';
-                        }
-                        return null;
+                      validator: (value) async {
+                        final error = auth.isValidUsername(value);
+                        _loginData['username']['isValid'] = error == null;
+                        return error;
                       },
                     ),
                     SizedBox(
@@ -103,6 +110,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         placeholder: 'Email',
                         validator: (value) async {
                           final error = await auth.isValidEmail(value);
+                          _loginData['email']['isValid'] = error == null;
                           return error;
                         }),
                   ],
