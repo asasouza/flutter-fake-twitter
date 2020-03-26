@@ -2,23 +2,23 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
-import '../widgets/button-rounded.dart';
-import '../widgets/text-input.dart';
-import '../widgets/logo.dart';
-import '../widgets/scaffold-container.dart';
+import '../../widgets/button-rounded.dart';
+import '../../widgets/text-input.dart';
+import '../../widgets/logo.dart';
+import '../../widgets/scaffold-container.dart';
 // providers
-import '../providers/auth.dart';
+import '../../providers/auth.dart';
 // helpers
-import '../helpers/colors.dart';
+import '../../helpers/colors.dart';
 
-class SignupScreen extends StatefulWidget {
-  static const routeName = '/signup';
+class SignupEmailAndUserScreen extends StatefulWidget {
+  static const routeName = '/signup/email-user';
 
   @override
-  _SignupScreenState createState() => _SignupScreenState();
+  _SignupEmailAndUserScreenState createState() => _SignupEmailAndUserScreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupEmailAndUserScreenState extends State<SignupEmailAndUserScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
   Map<String, Map<String, dynamic>> _loginData = {
     'username': {
@@ -30,29 +30,27 @@ class _SignupScreenState extends State<SignupScreen> {
       'value': '',
     },
   };
-  bool _isLoading = false;
-  bool _isValid = false;
   final _emailFocus = FocusNode();
 
-  @override
-  void dispose() {
-    super.dispose();
-
-    _emailFocus.dispose();
+  bool get _isValid {
+    return _loginData['email']['isValid'] && _loginData['username']['isValid'];
   }
 
   void _saveInputValue(String input, dynamic value) {
     _loginData[input]['value'] = value;
-    print(_loginData['email']['isValid']);
-    print(_loginData['username']['isValid']);
+
     setState(() {
-      _isValid =
-          _loginData['email']['isValid'] && _loginData['username']['isValid'];
+      _loginData[input]['isValid'] = false;
     });
   }
 
   void _onSubmit() {
-    print(_loginData);
+    if (_isValid) {
+      Provider.of<AuthProvider>(context, listen: false).setEmailAndUsername(
+        _loginData['email']['value'],
+        _loginData['username']['value'],
+      );
+    }
   }
 
   @override
@@ -94,8 +92,10 @@ class _SignupScreenState extends State<SignupScreen> {
                       onFieldSubmitted: (_) => this._emailFocus.requestFocus(),
                       placeholder: 'Username',
                       validator: (value) async {
-                        final error = auth.isValidUsername(value);
-                        _loginData['username']['isValid'] = error == null;
+                        final error = await auth.isValidUsername(value);
+                        setState(() {
+                          _loginData['username']['isValid'] = error == null;
+                        });
                         return error;
                       },
                     ),
@@ -110,7 +110,9 @@ class _SignupScreenState extends State<SignupScreen> {
                         placeholder: 'Email',
                         validator: (value) async {
                           final error = await auth.isValidEmail(value);
-                          _loginData['email']['isValid'] = error == null;
+                          setState(() {
+                            _loginData['email']['isValid'] = error == null;
+                          });
                           return error;
                         }),
                   ],

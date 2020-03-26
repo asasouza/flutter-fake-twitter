@@ -75,7 +75,7 @@ class _TextInputState extends State<TextInput> {
 
   void _onChanged(String value) {
     if (widget.validator != null) {
-      debounce.run(500, () async {
+      debounce.run(1000, () async {
         setState(() {
           _isValidating = true;
         });

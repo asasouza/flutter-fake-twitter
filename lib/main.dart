@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // screens
 import './screens/login.dart';
-import './screens/signup.dart';
+import './screens/signup/signup-email-user.dart';
+import './screens/signup/signup-password.dart';
 // helpers
 import './helpers/colors.dart';
 
@@ -24,9 +25,11 @@ class MyApp extends StatelessWidget {
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
-        home: LoginScreen(),
+        // home: LoginScreen(),
+        home: SignupPasswordScreen(),
         routes: {
-          SignupScreen.routeName: (_) => SignupScreen(),
+          SignupEmailAndUserScreen.routeName: (_) => SignupEmailAndUserScreen(),
+          SignupPasswordScreen.routeName: (_) => SignupPasswordScreen(),
         },
         title: 'Flutter Demo',
         theme: ThemeData(

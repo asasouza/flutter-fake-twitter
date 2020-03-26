@@ -7,7 +7,7 @@ import '../widgets/logo.dart';
 import '../widgets/scaffold-container.dart';
 import '../widgets/text-input.dart';
 // screens
-import '../screens/signup.dart';
+import '../screens/signup/signup-email-user.dart';
 // helpers
 import '../helpers/colors.dart';
 // providers
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
               style: Theme.of(context).textTheme.subhead,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed(SignupScreen.routeName);
+              Navigator.of(context).pushNamed(SignupEmailAndUserScreen.routeName);
             },
           ),
         ],
