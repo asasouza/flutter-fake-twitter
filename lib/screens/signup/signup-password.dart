@@ -26,6 +26,7 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
       'value': '',
     },
   };
+  bool _isLoading = false;
 
   bool get _isValid {
     return _loginData['password']['isValid'];
@@ -39,9 +40,19 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
     });
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
+    FocusScope.of(context).unfocus();
     if (_isValid) {
-      print('SUBMITED');
+      setState(() {
+        _isLoading = true;
+      });
+      await Provider.of<AuthProvider>(
+        context,
+        listen: false,
+      ).signup(_loginData['password']['value']);
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -97,7 +108,7 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
                       placeholder: 'Password',
                       validator: (String value) {
                         setState(() {
-                          _loginData['password']['isValid'] = value.length > 6;
+                          _loginData['password']['isValid'] = value.length >= 6;
                         });
                         return value.length < 6 ? '' : null;
                       },
@@ -134,6 +145,28 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
             width: double.infinity,
           ),
         ],
+      ),
+      showModal: this._isLoading,
+      modalBody: Center(
+        child: Container(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              SizedBox(
+                width: 40,
+              ),
+              Text(
+                'Signing up...',
+                style: Theme.of(context).textTheme.body1,
+              ),
+            ],
+          ),
+          color: ColorsHelper.darkBlue,
+          padding: EdgeInsets.all(20),
+          width: 200,
+        ),
       ),
       topDivider: false,
     );

@@ -12,12 +12,20 @@ class AuthProvider extends ChangeNotifier {
   String _email;
   String _userToken;
 
+  bool get isAuthenticated {
+    return _userToken != null;
+  }
+
   Future<void> login(String email, String password) async {
     return HttpHelper.post(
       '${Constants.baseURL}/login',
       body: {'email': email, 'password': password},
-    ).then((data) {
-      print(data.body);
+    ).then((response) {
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _userToken = data['token'];
+        notifyListeners();
+      }
     });
   }
 
@@ -48,5 +56,19 @@ class AuthProvider extends ChangeNotifier {
   void setEmailAndUsername(String email, String username) {
     _email = email;
     _username = username;
+  }
+
+  Future<void> signup(String password) {
+    return HttpHelper.post('${Constants.baseURL}/signup', body: {
+      'email': _email,
+      'password': password,
+      'username': _username,
+    }).then((response) {
+      if (response.statusCode == 201) {
+        final data = json.decode(response.body);
+        _userToken = data['token'];
+        notifyListeners();
+      }
+    });
   }
 }

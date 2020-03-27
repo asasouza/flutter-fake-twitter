@@ -6,6 +6,8 @@ import '../../widgets/button-rounded.dart';
 import '../../widgets/text-input.dart';
 import '../../widgets/logo.dart';
 import '../../widgets/scaffold-container.dart';
+// screens
+import './signup-password.dart';
 // providers
 import '../../providers/auth.dart';
 // helpers
@@ -50,6 +52,7 @@ class _SignupEmailAndUserScreenState extends State<SignupEmailAndUserScreen> {
         _loginData['email']['value'],
         _loginData['username']['value'],
       );
+      Navigator.of(context).pushNamed(SignupPasswordScreen.routeName);
     }
   }
 

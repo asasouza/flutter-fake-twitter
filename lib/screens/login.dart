@@ -28,13 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   final _passwordFocus = FocusNode();
 
-  @override
-  void dispose() {
-    super.dispose();
-
-    _passwordFocus.dispose();
-  }
-
   void _saveInputValue(String input, dynamic value) {
     _loginData[input] = value;
 
@@ -43,20 +36,17 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     FocusScope.of(context).unfocus();
     setState(() {
       _isLoading = true;
     });
-    Provider.of<AuthProvider>(context, listen: false)
-        .login(
+    await Provider.of<AuthProvider>(context, listen: false).login(
       _loginData['email'],
       _loginData['password'],
-    )
-        .then((_) {
-      setState(() {
-        _isLoading = false;
-      });
+    );
+    setState(() {
+      _isLoading = false;
     });
   }
 
@@ -71,7 +61,8 @@ class _LoginScreenState extends State<LoginScreen> {
               style: Theme.of(context).textTheme.subhead,
             ),
             onPressed: () {
-              Navigator.of(context).pushNamed(SignupEmailAndUserScreen.routeName);
+              Navigator.of(context)
+                  .pushNamed(SignupEmailAndUserScreen.routeName);
             },
           ),
         ],
