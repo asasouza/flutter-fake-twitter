@@ -6,6 +6,8 @@ import '../../widgets/button-rounded.dart';
 import '../../widgets/text-input.dart';
 import '../../widgets/logo.dart';
 import '../../widgets/scaffold-container.dart';
+// screens
+import '../settings/name-description.dart';
 // providers
 import '../../providers/auth.dart';
 // helpers
@@ -46,19 +48,21 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
       setState(() {
         _isLoading = true;
       });
-      await Provider.of<AuthProvider>(
+      final signedUp = await Provider.of<AuthProvider>(
         context,
         listen: false,
       ).signup(_loginData['password']['value']);
       setState(() {
         _isLoading = false;
       });
+      if(signedUp) {
+        Navigator.of(context).pushReplacementNamed(SettingsNameBio.routeName);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthProvider>(context, listen: false);
     return ScaffoldContainer(
       appBar: AppBar(
         title: Logo(),

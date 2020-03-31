@@ -68,93 +68,89 @@ class _LoginScreenState extends State<LoginScreen> {
         ],
         title: Logo(),
       ),
-      body: Stack(
+      body: Column(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Expanded(
-                child: Padding(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Text(
-                        'Log in to Twitter.',
-                        style: Theme.of(context).textTheme.title,
-                      ),
-                      SizedBox(
-                        height: 25,
-                      ),
-                      Form(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            TextInput(
-                              keyboardType: TextInputType.emailAddress,
-                              label: 'Email or username',
-                              onChanged: (value) =>
-                                  this._saveInputValue('email', value),
-                              onFieldSubmitted: (_) =>
-                                  _passwordFocus.requestFocus(),
-                              textInputAction: TextInputAction.next,
-                            ),
-                            SizedBox(
-                              height: 5,
-                            ),
-                            TextInput(
-                              focusNode: _passwordFocus,
-                              isPassword: true,
-                              keyboardType: TextInputType.visiblePassword,
-                              label: 'Password',
-                              onChanged: (value) =>
-                                  this._saveInputValue('password', value),
-                              onFieldSubmitted: (_) => this._onSubmit(),
-                              textInputAction: TextInputAction.done,
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Center(
-                              child: FlatButton(
-                                child: Text(
-                                  'Forgot password?',
-                                  style: Theme.of(context).textTheme.display1,
-                                ),
-                                onPressed: () {},
-                              ),
-                            ),
-                          ],
+          Expanded(
+            child: Padding(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Text(
+                    'Log in to Twitter.',
+                    style: Theme.of(context).textTheme.title,
+                  ),
+                  SizedBox(
+                    height: 25,
+                  ),
+                  Form(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        TextInput(
+                          keyboardType: TextInputType.emailAddress,
+                          label: 'Email or username',
+                          onChanged: (value) =>
+                              this._saveInputValue('email', value),
+                          onFieldSubmitted: (_) =>
+                              _passwordFocus.requestFocus(),
+                          textInputAction: TextInputAction.next,
                         ),
-                        key: this._formKey,
-                      )
-                    ],
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 15,
-                  ),
-                ),
-              ),
-              Container(
-                alignment: Alignment.centerRight,
-                child: SizedBox(
-                  child: ButtonRounded(
-                    disabled: !this._isValid,
-                    label: 'Log in',
-                    onPress: this._onSubmit,
-                  ),
-                  width: 80,
-                ),
-                decoration: BoxDecoration(
-                  border: Border(
-                    top: BorderSide(
-                      color: ColorsHelper.darkGray,
+                        SizedBox(
+                          height: 5,
+                        ),
+                        TextInput(
+                          focusNode: _passwordFocus,
+                          isPassword: true,
+                          keyboardType: TextInputType.visiblePassword,
+                          label: 'Password',
+                          onChanged: (value) =>
+                              this._saveInputValue('password', value),
+                          onFieldSubmitted: (_) => this._onSubmit(),
+                          textInputAction: TextInputAction.done,
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Center(
+                          child: FlatButton(
+                            child: Text(
+                              'Forgot password?',
+                              style: Theme.of(context).textTheme.display1,
+                            ),
+                            onPressed: () {},
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                ),
-                padding: EdgeInsets.all(10),
-                width: double.infinity,
+                    key: this._formKey,
+                  )
+                ],
               ),
-            ],
+              padding: EdgeInsets.symmetric(
+                horizontal: 15,
+                vertical: 15,
+              ),
+            ),
+          ),
+          Container(
+            alignment: Alignment.centerRight,
+            child: SizedBox(
+              child: ButtonRounded(
+                disabled: !this._isValid,
+                label: 'Log in',
+                onPress: this._onSubmit,
+              ),
+              width: 80,
+            ),
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(
+                  color: ColorsHelper.darkGray,
+                ),
+              ),
+            ),
+            padding: EdgeInsets.all(10),
+            width: double.infinity,
           ),
         ],
       ),

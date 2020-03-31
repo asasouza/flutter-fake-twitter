@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 // screens
 import './screens/home.dart';
 import './screens/login.dart';
+import './screens/settings/name-description.dart';
 import './screens/signup/signup-email-user.dart';
 import './screens/signup/signup-password.dart';
 // helpers
@@ -27,8 +28,10 @@ class MyApp extends StatelessWidget {
       child: Consumer<AuthProvider>(
         builder: (context, auth, _) => MaterialApp(
           debugShowCheckedModeBanner: false,
-          home: auth.isAuthenticated ? HomeScreen() : LoginScreen(),
+          // home: auth.isAuthenticated ? HomeScreen() : LoginScreen(),
+          home: SettingsNameBio(),
           routes: {
+            SettingsNameBio.routeName: (_) => SettingsNameBio(),
             SignupEmailAndUserScreen.routeName: (_) =>
                 SignupEmailAndUserScreen(),
             SignupPasswordScreen.routeName: (_) => SignupPasswordScreen(),

@@ -58,7 +58,7 @@ class AuthProvider extends ChangeNotifier {
     _username = username;
   }
 
-  Future<void> signup(String password) {
+  Future<bool> signup(String password) {
     return HttpHelper.post('${Constants.baseURL}/signup', body: {
       'email': _email,
       'password': password,
@@ -68,7 +68,9 @@ class AuthProvider extends ChangeNotifier {
         final data = json.decode(response.body);
         _userToken = data['token'];
         notifyListeners();
+        return true;
       }
+      return false;
     });
   }
 }

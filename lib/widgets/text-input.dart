@@ -11,6 +11,7 @@ class TextInput extends StatefulWidget {
   final TextInputType keyboardType;
   final String label;
   final int maxLength;
+  final bool multiLine;
   final Function onChanged;
   final Function onFieldSubmitted;
   final Function onSave;
@@ -25,6 +26,7 @@ class TextInput extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.label,
     this.maxLength,
+    this.multiLine = false,
     this.onChanged,
     this.onFieldSubmitted,
     this.onSave,
@@ -174,6 +176,7 @@ class _TextInputState extends State<TextInput> {
               obscureText: this._contentHidden,
               maxLength: widget.maxLength,
               maxLengthEnforced: false,
+              maxLines: widget.multiLine ? null : 1,
               onChanged: this._onChanged,
               onSaved: widget.onSave,
               onFieldSubmitted: widget.onFieldSubmitted,
