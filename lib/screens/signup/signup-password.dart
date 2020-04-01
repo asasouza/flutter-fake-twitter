@@ -22,7 +22,7 @@ class SignupPasswordScreen extends StatefulWidget {
 
 class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  Map<String, Map<String, dynamic>> _loginData = {
+  Map<String, Map<String, dynamic>> _formData = {
     'password': {
       'isValid': false,
       'value': '',
@@ -31,14 +31,14 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
   bool _isLoading = false;
 
   bool get _isValid {
-    return _loginData['password']['isValid'];
+    return _formData['password']['isValid'];
   }
 
   void _saveInputValue(String input, dynamic value) {
-    _loginData[input]['value'] = value;
+    _formData[input]['value'] = value;
 
     setState(() {
-      _loginData[input]['isValid'] = false;
+      _formData[input]['isValid'] = false;
     });
   }
 
@@ -51,7 +51,7 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
       final signedUp = await Provider.of<AuthProvider>(
         context,
         listen: false,
-      ).signup(_loginData['password']['value']);
+      ).signup(_formData['password']['value']);
       setState(() {
         _isLoading = false;
       });
@@ -112,7 +112,7 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
                       placeholder: 'Password',
                       validator: (String value) {
                         setState(() {
-                          _loginData['password']['isValid'] = value.length >= 6;
+                          _formData['password']['isValid'] = value.length >= 6;
                         });
                         return value.length < 6 ? '' : null;
                       },

@@ -17,6 +17,39 @@ class SettingsNameBio extends StatefulWidget {
 }
 
 class _SettingsNameBioState extends State<SettingsNameBio> {
+  final _bioFocus = FocusNode();
+  final Map<String, Map<String, dynamic>> _formData = {
+    'bio': {
+      'isValid': false,
+      'value': '',
+    },
+    'name': {
+      'isValid': false,
+      'value': '',
+    },
+  };
+  bool _isLoading = false;
+
+  bool get _isValid {
+    return _formData['bio']['isValid'] && _formData['name']['isValid'];
+  }
+
+  void _saveInputValue(String input, dynamic value) {
+    _formData[input]['value'] = value;
+  }
+
+  void _onSubmit() {
+    if (_isValid) {
+      setState(() {
+        _isLoading = true;
+      });
+      print(_formData);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldContainer(
@@ -55,12 +88,48 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
                       child: Column(
                         children: <Widget>[
                           TextInput(
+                            onChanged: (value) =>
+                                this._saveInputValue('name', value),
+                            onFieldSubmitted: (_) {
+                              _bioFocus.requestFocus();
+                            },
                             placeholder: 'Your name',
+                            validator: (String value) {
+                              String error;
+                              if (value.length > 50) {
+                                error = 'Must be 50 characters or fewer.';
+                              } else if (value.isEmpty) {
+                                error = '';
+                              }
+                              setState(() {
+                                _formData['name']['isValid'] = error == null;
+                              });
+                              return error;
+                            },
+                          ),
+                          SizedBox(
+                            height: 15,
                           ),
                           TextInput(
+                            focusNode: this._bioFocus,
                             maxLength: 160,
                             multiLine: true,
+                            onChanged: (value) =>
+                                this._saveInputValue('bio', value),
+                            onFieldSubmitted: (_) => this._onSubmit(),
                             placeholder: 'Your bio',
+                            validator: (String value) {
+                              String error;
+                              if (value.length > 160) {
+                                error = 'Must be 160 characters or fewer.';
+                              } else if (value.isEmpty) {
+                                error = '';
+                              }
+                              setState(() {
+                                _formData['bio']['isValid'] = error == null;
+                              });
+                              return error;
+                            },
                           ),
                         ],
                       ),
@@ -77,17 +146,18 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
               children: <Widget>[
                 SizedBox(
                   child: TextButton(
-                    disabled: false,
                     label: 'Skip for now',
-                    onPress: () {},
+                    onPress: () {
+                      Navigator.of(context).pushReplacementNamed('ChangePhoto');
+                    },
                   ),
                   width: 100,
                 ),
                 SizedBox(
                   child: ButtonRounded(
-                    disabled: true,
+                    disabled: !this._isValid,
                     label: 'Next',
-                    onPress: () {},
+                    onPress: this._onSubmit,
                   ),
                   width: 80,
                 ),
@@ -108,6 +178,28 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
             width: double.infinity,
           ),
         ],
+      ),
+      showModal: this._isLoading,
+      modalBody: Center(
+        child: Container(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              CircularProgressIndicator(),
+              SizedBox(
+                width: 40,
+              ),
+              Text(
+                'Setting up profile...',
+                style: Theme.of(context).textTheme.body1,
+              ),
+            ],
+          ),
+          color: ColorsHelper.darkBlue,
+          padding: EdgeInsets.all(20),
+          width: 200,
+        ),
       ),
       topDivider: false,
     );

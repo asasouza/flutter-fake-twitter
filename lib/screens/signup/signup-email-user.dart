@@ -22,7 +22,7 @@ class SignupEmailAndUserScreen extends StatefulWidget {
 
 class _SignupEmailAndUserScreenState extends State<SignupEmailAndUserScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  Map<String, Map<String, dynamic>> _loginData = {
+  Map<String, Map<String, dynamic>> _formData = {
     'username': {
       'isValid': false,
       'value': '',
@@ -35,22 +35,22 @@ class _SignupEmailAndUserScreenState extends State<SignupEmailAndUserScreen> {
   final _emailFocus = FocusNode();
 
   bool get _isValid {
-    return _loginData['email']['isValid'] && _loginData['username']['isValid'];
+    return _formData['email']['isValid'] && _formData['username']['isValid'];
   }
 
   void _saveInputValue(String input, dynamic value) {
-    _loginData[input]['value'] = value;
+    _formData[input]['value'] = value;
 
     setState(() {
-      _loginData[input]['isValid'] = false;
+      _formData[input]['isValid'] = false;
     });
   }
 
   void _onSubmit() {
     if (_isValid) {
       Provider.of<AuthProvider>(context, listen: false).setEmailAndUsername(
-        _loginData['email']['value'],
-        _loginData['username']['value'],
+        _formData['email']['value'],
+        _formData['username']['value'],
       );
       Navigator.of(context).pushNamed(SignupPasswordScreen.routeName);
     }
@@ -97,7 +97,7 @@ class _SignupEmailAndUserScreenState extends State<SignupEmailAndUserScreen> {
                       validator: (value) async {
                         final error = await auth.isValidUsername(value);
                         setState(() {
-                          _loginData['username']['isValid'] = error == null;
+                          _formData['username']['isValid'] = error == null;
                         });
                         return error;
                       },
@@ -114,7 +114,7 @@ class _SignupEmailAndUserScreenState extends State<SignupEmailAndUserScreen> {
                         validator: (value) async {
                           final error = await auth.isValidEmail(value);
                           setState(() {
-                            _loginData['email']['isValid'] = error == null;
+                            _formData['email']['isValid'] = error == null;
                           });
                           return error;
                         }),

@@ -20,7 +20,7 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   GlobalKey<FormState> _formKey = GlobalKey();
-  Map<String, String> _loginData = {
+  Map<String, String> _formData = {
     'email': '',
     'password': '',
   };
@@ -29,10 +29,10 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordFocus = FocusNode();
 
   void _saveInputValue(String input, dynamic value) {
-    _loginData[input] = value;
+    _formData[input] = value;
 
     setState(() {
-      _isValid = _loginData['email'] != '' && _loginData['password'] != '';
+      _isValid = _formData['email'] != '' && _formData['password'] != '';
     });
   }
 
@@ -42,8 +42,8 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
     await Provider.of<AuthProvider>(context, listen: false).login(
-      _loginData['email'],
-      _loginData['password'],
+      _formData['email'],
+      _formData['password'],
     );
     setState(() {
       _isLoading = false;
