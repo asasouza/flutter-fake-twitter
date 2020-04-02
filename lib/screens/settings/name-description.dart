@@ -1,11 +1,14 @@
 // flutter
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 // widgets
 import '../../widgets/button-rounded.dart';
 import '../../widgets/logo.dart';
 import '../../widgets/scaffold-container.dart';
 import '../../widgets/text-button.dart';
 import '../../widgets/text-input.dart';
+// providers
+import '../../providers/user.dart';
 // helpers
 import '../../helpers/colors.dart';
 
@@ -38,12 +41,18 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
     _formData[input]['value'] = value;
   }
 
-  void _onSubmit() {
+  void _onSubmit() async {
     if (_isValid) {
       setState(() {
         _isLoading = true;
       });
-      print(_formData);
+      final updated = await Provider.of<UserProvider>(
+        context,
+        listen: false,
+      ).updateUserInfo(
+        bio: _formData['bio']['value'],
+        name: _formData['name']['value'],
+      );
       setState(() {
         _isLoading = false;
       });
@@ -156,6 +165,7 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
                 SizedBox(
                   child: ButtonRounded(
                     disabled: !this._isValid,
+                    isLoading: this._isLoading,
                     label: 'Next',
                     onPress: this._onSubmit,
                   ),
@@ -178,28 +188,6 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
             width: double.infinity,
           ),
         ],
-      ),
-      showModal: this._isLoading,
-      modalBody: Center(
-        child: Container(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(),
-              SizedBox(
-                width: 40,
-              ),
-              Text(
-                'Setting up profile...',
-                style: Theme.of(context).textTheme.body1,
-              ),
-            ],
-          ),
-          color: ColorsHelper.darkBlue,
-          padding: EdgeInsets.all(20),
-          width: 200,
-        ),
       ),
       topDivider: false,
     );

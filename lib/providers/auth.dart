@@ -12,6 +12,10 @@ class AuthProvider extends ChangeNotifier {
   String _email;
   String _userToken;
 
+  String get token {
+    return _userToken;
+  }
+
   bool get isAuthenticated {
     return _userToken != null;
   }

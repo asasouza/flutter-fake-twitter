@@ -13,6 +13,7 @@ import './helpers/colors.dart';
 
 // providers
 import './providers/auth.dart';
+import './providers/user.dart';
 
 void main() => runApp(MyApp());
 
@@ -24,6 +25,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider.value(
           value: AuthProvider(),
         ),
+        ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
+          create: (_) => UserProvider(),
+          update: (context, auth, user) => UserProvider(
+            authToken: auth.token,
+          ),
+        )
       ],
       child: Consumer<AuthProvider>(
         builder: (context, auth, _) => MaterialApp(
@@ -36,7 +43,7 @@ class MyApp extends StatelessWidget {
                 SignupEmailAndUserScreen(),
             SignupPasswordScreen.routeName: (_) => SignupPasswordScreen(),
           },
-          title: 'Flutter Demo',
+          title: 'Flutter FakeTwitter',
           theme: ThemeData(
             accentColor: ColorsHelper.lightBlue,
             appBarTheme: AppBarTheme(
