@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
-import '../../widgets/button-rounded.dart';
+import '../../widgets/rounded-button.dart';
 import '../../widgets/text-input.dart';
 import '../../widgets/logo.dart';
 import '../../widgets/scaffold-container.dart';
@@ -131,7 +131,7 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
           Container(
             alignment: Alignment.centerRight,
             child: SizedBox(
-              child: ButtonRounded(
+              child: RoundedButton(
                 disabled: !this._isValid,
                 label: 'Next',
                 onPress: this._onSubmit,

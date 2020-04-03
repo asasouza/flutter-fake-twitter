@@ -1,10 +1,13 @@
 // flutter
+import 'dart:io';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 // widgets
 import '../../widgets/scaffold-container.dart';
 import '../../widgets/logo.dart';
-import '../../widgets/button-rounded.dart';
+import '../../widgets/rounded-button.dart';
 import '../../widgets/text-button.dart';
 // helper
 import '../../helpers/colors.dart';
@@ -17,6 +20,20 @@ class SettingsPictureScreen extends StatefulWidget {
 }
 
 class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
+  File _image;
+
+  void _pickImage() async {
+    final image = await ImagePicker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (image != null) {
+      setState(() {
+        _image = image;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldContainer(
@@ -53,39 +70,51 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                     ),
                     Container(
                       alignment: Alignment.center,
-                      child: GestureDetector(
+                      child: InkWell(
                         child: DottedBorder(
                           borderType: BorderType.RRect,
-                          child: Column(
-                            children: <Widget>[
-                              Icon(
-                                Icons.photo_camera,
-                                color: ColorsHelper.lightBlue,
-                                size: 80,
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                'Upload',
-                                style: TextStyle(
-                                  color: ColorsHelper.lightBlue,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
+                          child: this._image == null
+                              ? Column(
+                                  children: <Widget>[
+                                    Icon(
+                                      Icons.photo_camera,
+                                      color: ColorsHelper.lightBlue,
+                                      size: 80,
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      'Upload',
+                                      style: TextStyle(
+                                        color: ColorsHelper.lightBlue,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    )
+                                  ],
+                                )
+                              : ClipRRect(
+                                  child: Image.file(
+                                    this._image,
+                                    fit: BoxFit.cover,
+                                    height: 186,
+                                    width: 193,
+                                  ),
+                                  borderRadius: BorderRadius.all(Radius.circular(20)),
                                 ),
-                              )
-                            ],
-                          ),
                           color: ColorsHelper.lightBlue,
                           dashPattern: [15],
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 60,
-                            vertical: 40,
-                          ),
+                          padding: this._image == null
+                              ? EdgeInsets.symmetric(
+                                  horizontal: 60,
+                                  vertical: 40,
+                                )
+                              : EdgeInsets.all(3),
                           radius: Radius.circular(20),
                           strokeWidth: 3,
                         ),
-                        onTap: () => print('teste'),
+                        onTap: Feedback.wrapForTap(this._pickImage, context),
                       ),
                     ),
                   ],
@@ -105,8 +134,8 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                     width: 100,
                   ),
                   SizedBox(
-                    child: ButtonRounded(
-                      disabled: true,
+                    child: RoundedButton(
+                      disabled: this._image == null,
                       isLoading: false,
                       label: 'Next',
                       onPress: () {},

@@ -26,6 +26,12 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We used the gallery to upload images to your profile and tweets.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We used the gallery to upload images to your profile and tweets.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We used the gallery to upload images to your profile and tweets.</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

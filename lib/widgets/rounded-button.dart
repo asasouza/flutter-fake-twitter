@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class ButtonRounded extends StatelessWidget {
+class RoundedButton extends StatelessWidget {
   final bool disabled;
   final bool isLoading;
   final String label;
   final Function onPress;
 
-  ButtonRounded({
+  RoundedButton({
     this.disabled = false,
     this.isLoading = false,
     @required this.label,
@@ -47,7 +47,7 @@ class ButtonRounded extends StatelessWidget {
         ),
         padding: EdgeInsets.all(7),
       ),
-      onTap: this.disabled || this.isLoading ? () {} : this.onPress,
+      onTap: this.disabled || this.isLoading ? () {} : Feedback.wrapForTap(this.onPress, context),
     );
   }
 }
