@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:async';
 // flutter
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // helpers
 import '../helpers/constants.dart';
 import '../helpers/http.dart';
@@ -11,6 +12,7 @@ class AuthProvider extends ChangeNotifier {
   String _username;
   String _email;
   String _userToken;
+  String _userId;
 
   String get token {
     return _userToken;
@@ -27,7 +29,26 @@ class AuthProvider extends ChangeNotifier {
     ).then((response) {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
+        _userId = data['userID'];
         _userToken = data['token'];
+
+        SharedPreferences.getInstance().then((storage) {
+          storage.setString(
+              Constants.storageAuthKey,
+              json.encode({
+                "id": _userId,
+                "token": _userToken,
+              }));
+          storage.setString(
+              Constants.storageUserKey,
+              json.encode({
+                "bio": data['bio'],
+                "name": data['name'],
+                "picture": data['picture'],
+                "pictureThumb": data['pictureThumb'],
+                "username": data['username'],
+              }));
+        });
         notifyListeners();
       }
     });
@@ -71,10 +92,43 @@ class AuthProvider extends ChangeNotifier {
       if (response.statusCode == 201) {
         final data = json.decode(response.body);
         _userToken = data['token'];
+
+        SharedPreferences.getInstance().then((storage) {
+          storage.setString(
+              Constants.storageAuthKey,
+              json.encode({
+                'id': data['userID'],
+                'token': data['token'],
+              }));
+        });
         notifyListeners();
         return true;
       }
       return false;
     });
+  }
+
+  Future<bool> autoLogin() async {
+    final storage = await SharedPreferences.getInstance();
+    if (!storage.containsKey(Constants.storageAuthKey)) {
+      return false;
+    }
+    final userData =
+        json.decode(storage.getString(Constants.storageAuthKey)) as Map<String, Object>;
+
+    _userToken = userData['token'];
+    _userId = userData['id'];
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> logout() async {
+    _userToken = null;
+    _userId = null;
+
+    SharedPreferences.getInstance().then((storage) {
+      storage.clear();
+    });
+    notifyListeners();
   }
 }

@@ -1,7 +1,10 @@
-// Flutter
+// flutter
 import 'package:flutter/material.dart';
-// Widgets
+import 'package:provider/provider.dart';
+// widgets
 import '../widgets/scaffold-container.dart';
+// providers
+import '../providers/auth.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -11,7 +14,12 @@ class HomeScreen extends StatelessWidget {
         title: Text('Home'),
       ),
       body: Center(
-        child: Text('This is home!'),
+        child: RaisedButton(
+          child: Text('Logout'),
+          onPressed: () {
+            Provider.of<AuthProvider>(context, listen: false).logout();
+          },
+        ),
       ),
     );
   }

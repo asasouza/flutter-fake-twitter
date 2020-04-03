@@ -27,7 +27,6 @@ class HttpHelper{
     Map<String, String> headers = const {},
     String token,
   }) async {
-    print(token);
     return http.put(
       url,
       body: json.encode(body),
