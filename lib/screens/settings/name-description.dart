@@ -7,19 +7,21 @@ import '../../widgets/logo.dart';
 import '../../widgets/scaffold-container.dart';
 import '../../widgets/text-button.dart';
 import '../../widgets/text-input.dart';
+// screens
+import './picture.dart';
 // providers
 import '../../providers/user.dart';
 // helpers
 import '../../helpers/colors.dart';
 
-class SettingsNameBio extends StatefulWidget {
+class SettingsNameBioScreen extends StatefulWidget {
   static const routeName = '/settings/name-bio';
 
   @override
-  _SettingsNameBioState createState() => _SettingsNameBioState();
+  _SettingsNameBioScreenState createState() => _SettingsNameBioScreenState();
 }
 
-class _SettingsNameBioState extends State<SettingsNameBio> {
+class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
   final _bioFocus = FocusNode();
   final Map<String, Map<String, dynamic>> _formData = {
     'bio': {
@@ -53,6 +55,9 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
         bio: _formData['bio']['value'],
         name: _formData['name']['value'],
       );
+      if(updated) {
+        Navigator.of(context).pushReplacementNamed(SettingsPictureScreen.routeName);
+      }
       setState(() {
         _isLoading = false;
       });
@@ -157,7 +162,7 @@ class _SettingsNameBioState extends State<SettingsNameBio> {
                   child: TextButton(
                     label: 'Skip for now',
                     onPress: () {
-                      Navigator.of(context).pushReplacementNamed('ChangePhoto');
+                      Navigator.of(context).pushReplacementNamed(SettingsPictureScreen.routeName);
                     },
                   ),
                   width: 100,

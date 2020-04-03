@@ -56,7 +56,7 @@ class _SignupPasswordScreenState extends State<SignupPasswordScreen> {
         _isLoading = false;
       });
       if(signedUp) {
-        Navigator.of(context).pushReplacementNamed(SettingsNameBio.routeName);
+        Navigator.of(context).pushReplacementNamed(SettingsNameBioScreen.routeName);
       }
     }
   }

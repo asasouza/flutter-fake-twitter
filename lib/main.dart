@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import './screens/home.dart';
 import './screens/login.dart';
 import './screens/settings/name-description.dart';
+import './screens/settings/picture.dart';
 import './screens/signup/signup-email-user.dart';
 import './screens/signup/signup-password.dart';
 import './screens/splash.dart';
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: auth.isAuthenticated
               // ? HomeScreen()
-              ? SettingsNameBio()
+              ? SettingsPictureScreen()
               : FutureBuilder(
                   builder: (context, snapshot) =>
                       snapshot.connectionState == ConnectionState.waiting
@@ -47,7 +48,8 @@ class MyApp extends StatelessWidget {
                   future: auth.autoLogin(),
                 ),
           routes: {
-            SettingsNameBio.routeName: (_) => SettingsNameBio(),
+            SettingsNameBioScreen.routeName: (_) => SettingsNameBioScreen(),
+            SettingsPictureScreen.routeName: (_) => SettingsPictureScreen(),
             SignupEmailAndUserScreen.routeName: (_) =>
                 SignupEmailAndUserScreen(),
             SignupPasswordScreen.routeName: (_) => SignupPasswordScreen(),
