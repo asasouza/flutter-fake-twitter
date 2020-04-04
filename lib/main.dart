@@ -38,8 +38,7 @@ class MyApp extends StatelessWidget {
         builder: (context, auth, _) => MaterialApp(
           debugShowCheckedModeBanner: false,
           home: auth.isAuthenticated
-              // ? HomeScreen()
-              ? SettingsPictureScreen()
+              ? HomeScreen()
               : FutureBuilder(
                   builder: (context, snapshot) =>
                       snapshot.connectionState == ConnectionState.waiting
@@ -48,6 +47,7 @@ class MyApp extends StatelessWidget {
                   future: auth.autoLogin(),
                 ),
           routes: {
+            HomeScreen.routeName: (_) => HomeScreen(),
             SettingsNameBioScreen.routeName: (_) => SettingsNameBioScreen(),
             SettingsPictureScreen.routeName: (_) => SettingsPictureScreen(),
             SignupEmailAndUserScreen.routeName: (_) =>

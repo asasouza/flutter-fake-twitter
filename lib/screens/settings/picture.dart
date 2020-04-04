@@ -1,14 +1,19 @@
-// flutter
+// dart
 import 'dart:io';
-
+// flutter
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 // widgets
 import '../../widgets/scaffold-container.dart';
 import '../../widgets/logo.dart';
 import '../../widgets/rounded-button.dart';
 import '../../widgets/text-button.dart';
+// screens
+import '../home.dart';
+// providers
+import '../../providers/user.dart';
 // helper
 import '../../helpers/colors.dart';
 
@@ -21,6 +26,7 @@ class SettingsPictureScreen extends StatefulWidget {
 
 class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
   File _image;
+  bool _isLoading = false;
 
   void _pickImage() async {
     final image = await ImagePicker.pickImage(
@@ -31,6 +37,27 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
       setState(() {
         _image = image;
       });
+    }
+  }
+
+  void _onSubmit() async {
+    if (_image != null) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      final updated = await Provider.of<UserProvider>(
+        context,
+        listen: false,
+      ).updateUserPicture(_image);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      if(updated) {
+        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      }
     }
   }
 
@@ -101,7 +128,8 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                                     height: 186,
                                     width: 193,
                                   ),
-                                  borderRadius: BorderRadius.all(Radius.circular(20)),
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(20)),
                                 ),
                           color: ColorsHelper.lightBlue,
                           dashPattern: [15],
@@ -129,16 +157,18 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                   SizedBox(
                     child: TextButton(
                       label: 'Skip for now',
-                      onPress: () {},
+                      onPress: () {
+                        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+                      },
                     ),
                     width: 100,
                   ),
                   SizedBox(
                     child: RoundedButton(
                       disabled: this._image == null,
-                      isLoading: false,
+                      isLoading: this._isLoading,
                       label: 'Next',
-                      onPress: () {},
+                      onPress: this._onSubmit,
                     ),
                     width: 80,
                   ),

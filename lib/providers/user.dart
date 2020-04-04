@@ -1,6 +1,7 @@
 //dart
 import 'dart:convert';
 import 'dart:async';
+import 'dart:io';
 // flutter
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,14 +17,13 @@ class UserProvider extends ChangeNotifier {
   String _pictureThumb;
   String _username;
 
-  UserProvider({ this.authToken }) {
+  UserProvider({this.authToken}) {
     populateDataFromStorage();
   }
 
   Future<bool> updateUserInfo({
     String bio,
     String name,
-    String photo,
   }) async {
     return HttpHelper.put(
       '${Constants.baseURL}/users',
@@ -46,6 +46,36 @@ class UserProvider extends ChangeNotifier {
                 'picture': data['picture'],
                 'pictureThumb': data['pictureThumb'],
                 'username': data['username'],
+              }));
+        });
+        notifyListeners();
+        return true;
+      }
+      return false;
+    });
+  }
+
+  Future<bool> updateUserPicture(File picture) async {
+    return HttpHelper.uploadImage(
+      '${Constants.baseURL}/users',
+      picture,
+      fieldName: 'picture',
+      method: 'PUT',
+      token: authToken,
+    ).then((response) {
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        _picture = data['picture'];
+        _pictureThumb = data['pictureThumb'];
+        SharedPreferences.getInstance().then((storage) {
+          storage.setString(
+              Constants.storageUserKey,
+              json.encode({
+                'bio': _bio,
+                'name': _name,
+                'picture': _picture,
+                'pictureThumb': _pictureThumb,
+                'username': _username,
               }));
         });
         notifyListeners();

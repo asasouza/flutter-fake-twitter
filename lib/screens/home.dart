@@ -7,6 +7,8 @@ import '../widgets/scaffold-container.dart';
 import '../providers/auth.dart';
 
 class HomeScreen extends StatelessWidget {
+  static const routeName = '/home';
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldContainer(
