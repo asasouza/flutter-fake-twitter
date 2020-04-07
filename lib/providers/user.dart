@@ -21,6 +21,16 @@ class UserProvider extends ChangeNotifier {
     populateDataFromStorage();
   }
 
+  Map<String, String> get user {
+    return {
+      'bio': _bio,
+      'name': _name,
+      'picture': _picture,
+      'pictureThumb': _pictureThumb,
+      'username': _username,
+    };
+  }
+
   Future<bool> updateUserInfo({
     String bio,
     String name,
@@ -34,7 +44,7 @@ class UserProvider extends ChangeNotifier {
         final data = json.decode(response.body);
         _bio = data['bio'];
         _name = data['name'];
-        _picture = data['username'];
+        _picture = data['picture'];
         _pictureThumb = data['pictureThumb'];
         _username = data['username'];
         SharedPreferences.getInstance().then((storage) {
@@ -93,7 +103,7 @@ class UserProvider extends ChangeNotifier {
       final data = json.decode(storage.getString(Constants.storageUserKey));
       _bio = data['bio'];
       _name = data['name'];
-      _picture = data['username'];
+      _picture = data['picture'];
       _pictureThumb = data['pictureThumb'];
       _username = data['username'];
 

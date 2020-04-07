@@ -6,6 +6,9 @@ import '../helpers/colors.dart';
 class ScaffoldContainer extends StatelessWidget {
   final PreferredSizeWidget appBar;
   final Widget body;
+  final Widget bottomNavigationBar;
+  final Widget drawer;
+  final Widget floatingActionButton;
   final Widget modalBody;
   final bool showModal;
   final bool topDivider;
@@ -13,6 +16,9 @@ class ScaffoldContainer extends StatelessWidget {
   ScaffoldContainer({
     this.appBar,
     @required this.body,
+    this.bottomNavigationBar,
+    this.drawer,
+    this.floatingActionButton,
     this.modalBody,
     this.showModal = false,
     this.topDivider = true,
@@ -37,6 +43,9 @@ class ScaffoldContainer extends StatelessWidget {
               width: double.infinity,
             ),
           ),
+          bottomNavigationBar: this.bottomNavigationBar,
+          drawer: this.drawer,
+          floatingActionButton: this.floatingActionButton,
         ),
         if (this.showModal)
           Stack(
