@@ -61,7 +61,10 @@ class MyApp extends StatelessWidget {
               brightness: Brightness.dark,
               elevation: 0,
             ),
-            dividerColor: ColorsHelper.lightGray,
+            dividerTheme: DividerThemeData(
+              color: ColorsHelper.lightGray,
+              thickness: 0.2,
+            ),
             primarySwatch: ColorsHelper.darkBlue,
             textTheme: ThemeData.dark().textTheme.copyWith(
                   body1: TextStyle(

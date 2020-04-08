@@ -6,6 +6,7 @@ import '../widgets/main-drawer.dart';
 import '../widgets/scaffold-container.dart';
 // providers
 import '../providers/auth.dart';
+import '../providers/user.dart';
 // helpers
 import '../helpers/colors.dart';
 
@@ -24,12 +25,18 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   initState() {
     super.initState();
+    Provider.of<UserProvider>(context, listen: false).populateDataFromStorage();
+    
     _tabRoutes = [
-      RaisedButton(
-        child: Text('Logout'),
-        onPressed: () {
-          Provider.of<AuthProvider>(context, listen: false).logout();
-        },
+      Container(
+        width: 100,
+        height: 100,
+        // child: RaisedButton(
+        //   child: Text('Logout'),
+        //   onPressed: () {
+        //     Provider.of<AuthProvider>(context, listen: false).logout();
+        //   },
+        // ),
       ),
       Text('Search'),
     ];
@@ -55,6 +62,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: Container(
+        color: ColorsHelper.darkBlue,
         child: _tabRoutes[_selectedTab],
         height: double.infinity,
         width: double.infinity,
