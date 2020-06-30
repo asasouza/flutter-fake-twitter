@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import './screens/home.dart';
 import './screens/login.dart';
 import './screens/settings/name-description.dart';
+import './screens/new-tweet.dart';
 import './screens/settings/picture.dart';
 import './screens/signup/signup-email-user.dart';
 import './screens/signup/signup-password.dart';
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
                 ),
           routes: {
             HomeScreen.routeName: (_) => HomeScreen(),
+            NewTweetScreen.routeName: (_) => NewTweetScreen(),
             SettingsNameBioScreen.routeName: (_) => SettingsNameBioScreen(),
             SettingsPictureScreen.routeName: (_) => SettingsPictureScreen(),
             SignupEmailAndUserScreen.routeName: (_) =>
@@ -60,6 +62,9 @@ class MyApp extends StatelessWidget {
             appBarTheme: AppBarTheme(
               brightness: Brightness.dark,
               elevation: 0,
+              iconTheme: IconThemeData(
+                color: ColorsHelper.lightBlue,
+              ),
             ),
             dividerTheme: DividerThemeData(
               color: ColorsHelper.lightGray,

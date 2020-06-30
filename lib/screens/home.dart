@@ -4,8 +4,9 @@ import 'package:provider/provider.dart';
 // widgets
 import '../widgets/main-drawer.dart';
 import '../widgets/scaffold-container.dart';
+// screens
+import './new-tweet.dart';
 // providers
-import '../providers/auth.dart';
 import '../providers/user.dart';
 // helpers
 import '../helpers/colors.dart';
@@ -26,7 +27,7 @@ class _HomeScreenState extends State<HomeScreen> {
   initState() {
     super.initState();
     Provider.of<UserProvider>(context, listen: false).populateDataFromStorage();
-    
+
     _tabRoutes = [
       Container(
         width: 100,
@@ -102,7 +103,12 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.edit),
         onPressed: () {
-          print('Open new tweet');
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => NewTweetScreen(),
+              fullscreenDialog: true,
+            ),
+          );
         },
       ),
     );
