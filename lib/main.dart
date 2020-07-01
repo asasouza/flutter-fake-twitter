@@ -1,5 +1,6 @@
 // flutter
 import 'package:flutter/material.dart';
+import 'package:flutter_fake_twitter/providers/tweet.dart';
 // packages
 import 'package:provider/provider.dart';
 // screens
@@ -31,6 +32,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProxyProvider<AuthProvider, UserProvider>(
           create: (_) => UserProvider(),
           update: (context, auth, user) => UserProvider(
+            authToken: auth.token,
+          ),
+        ),
+        ChangeNotifierProxyProvider<AuthProvider, TweetProvider>(
+          create: (_) => TweetProvider(),
+          update: (context, auth, tweet) => TweetProvider(
             authToken: auth.token,
           ),
         )
@@ -100,6 +107,14 @@ class MyApp extends StatelessWidget {
                     fontWeight: FontWeight.normal,
                   ),
                 ),
+            snackBarTheme: SnackBarThemeData(
+              backgroundColor: ColorsHelper.darkGray.withOpacity(0.3),
+              contentTextStyle: TextStyle(
+                color: ColorsHelper.white,
+                fontFamily: 'Roboto',
+                fontSize: 15,
+              ),
+            ),
           ),
         ),
       ),

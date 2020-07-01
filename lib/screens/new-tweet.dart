@@ -1,8 +1,13 @@
 // flutter
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 // widgets
 import '../widgets/rounded-button.dart';
 import '../widgets/scaffold-container.dart';
+// providers
+import '../providers/tweet.dart';
+import '../providers/user.dart';
 // Helpers
 import '../helpers/colors.dart';
 
@@ -14,19 +19,51 @@ class NewTweetScreen extends StatefulWidget {
 }
 
 class _NewTweetScreenState extends State<NewTweetScreen> {
+  final int contentMaxLength = 140;
+  Map<String, String> _formData = {
+    'content': '',
+  };
+  double _contentSize = 0;
+  bool _isLoading = false;
+  bool _isValid = false;
+
+  void _saveInputValue(String input, dynamic value) {
+    _formData[input] = value;
+    setState(() {
+      _isValid = _formData['content'] != '';
+      _contentSize = value.toString().length / this.contentMaxLength;
+    });
+  }
+
+  void _onSubmit() async {
+    if (this._isValid) {
+      setState(() {
+        _isLoading = true;
+      });
+      final created = await Provider.of<TweetProvider>(
+        context,
+        listen: false,
+      ).createTweet(this._formData['content']);
+      Navigator.of(context).pop(created);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<UserProvider>(context, listen: false).user;
     return ScaffoldContainer(
       appBar: AppBar(
         actions: <Widget>[
           Padding(
             child: SizedBox(
               child: RoundedButton(
+                disabled: !this._isValid,
+                isLoading: this._isLoading,
                 label: 'Tweet',
-                onPress: () {
-                  print('New tweet');
-                },
-                disabled: true,
+                onPress: this._onSubmit,
               ),
               width: 100,
             ),
@@ -38,12 +75,12 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
         children: <Widget>[
           Expanded(
             child: Padding(
-              padding: const EdgeInsets.all(15),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundColor: Colors.red,
+                    backgroundColor: ColorsHelper.darkGray,
+                    // child: Image.network(user['picture']),
                     radius: 20,
                   ),
                   Form(
@@ -55,6 +92,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
                           contentPadding: EdgeInsets.only(
                             left: 15,
                             right: 15,
+                            top: 0,
                           ),
                           counterText: '',
                           disabledBorder: InputBorder.none,
@@ -68,25 +106,28 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
                         ),
                         keyboardType: TextInputType.multiline,
                         maxLines: null,
-                        maxLength: 140,
+                        maxLength: this.contentMaxLength,
+                        onChanged: (value) {
+                          this._saveInputValue('content', value);
+                        },
                         style: Theme.of(context).textTheme.body2,
                       ),
-                      width: 335,
+                      width: MediaQuery.of(context).size.width - 70,
                     ),
                   ),
                 ],
               ),
+              padding: const EdgeInsets.all(15),
             ),
           ),
           Container(
             alignment: Alignment.centerRight,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(15),
-                color: Colors.red,
-              ),
-              width: 30,
-              height: 30,
+            child: CircularPercentIndicator(
+              backgroundColor: ColorsHelper.darkGray.withOpacity(0.3),
+              lineWidth: 2.5,
+              percent: this._contentSize,
+              progressColor: ColorsHelper.lightBlue,
+              radius: 25,
             ),
             decoration: BoxDecoration(
               border: Border(

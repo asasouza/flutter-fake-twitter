@@ -49,6 +49,25 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  void _openNewTweet(BuildContext context) async {
+    final result = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => NewTweetScreen(),
+        fullscreenDialog: true,
+      ),
+    );
+    if (result) {
+      Scaffold.of(context)
+        ..removeCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            content: Text('Tweet created!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldContainer(
@@ -100,14 +119,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       drawer: MainDrawer(),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.edit),
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => NewTweetScreen(),
-              fullscreenDialog: true,
-            ),
+      floatingActionButton: Builder(
+        builder: (BuildContext context) {
+          return FloatingActionButton(
+            child: Icon(Icons.edit),
+            onPressed: () => this._openNewTweet(context),
           );
         },
       ),
