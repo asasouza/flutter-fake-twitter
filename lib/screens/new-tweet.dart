@@ -80,7 +80,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: ColorsHelper.darkGray,
-                    // child: Image.network(user['picture']),
+                    child: Image.network(user['picture']),
                     radius: 20,
                   ),
                   Form(
@@ -105,7 +105,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
                               ),
                         ),
                         keyboardType: TextInputType.multiline,
-                        maxLines: null,
+                        maxLines: 20,
                         maxLength: this.contentMaxLength,
                         onChanged: (value) {
                           this._saveInputValue('content', value);

@@ -9,6 +9,21 @@ import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
 class HttpHelper {
+  static Future<http.Response> get(
+    String url, {
+    Map<String, String> headers = const {},
+    String token,
+  }) async {
+    return http.get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": token != null ? "Bearer $token" : "",
+        ...headers,
+      },
+    );
+  }
+
   static Future<http.Response> post(
     String url, {
     Map<String, dynamic> body,

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 // widgets
 import '../widgets/main-drawer.dart';
 import '../widgets/scaffold-container.dart';
+import '../widgets/tweet-list.dart';
 // screens
 import './new-tweet.dart';
 // providers
@@ -29,16 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<UserProvider>(context, listen: false).populateDataFromStorage();
 
     _tabRoutes = [
-      Container(
-        width: 100,
-        height: 100,
-        // child: RaisedButton(
-        //   child: Text('Logout'),
-        //   onPressed: () {
-        //     Provider.of<AuthProvider>(context, listen: false).logout();
-        //   },
-        // ),
-      ),
+      TweetList(),
       Text('Search'),
     ];
   }
