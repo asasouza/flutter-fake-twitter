@@ -106,9 +106,20 @@ class MyApp extends StatelessWidget {
                     fontSize: 15,
                     fontWeight: FontWeight.normal,
                   ),
+                  display2: TextStyle(
+                    color: ColorsHelper.white,
+                    fontFamily: 'Roboto',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w900,
+                  ),
+                  display3: TextStyle(
+                    color: ColorsHelper.lightGray.shade600,
+                    fontSize: 15,
+                    fontWeight: FontWeight.normal,
+                  ),
                 ),
             snackBarTheme: SnackBarThemeData(
-              backgroundColor: ColorsHelper.darkGray.withOpacity(0.3),
+              backgroundColor: Colors.grey.shade800,
               contentTextStyle: TextStyle(
                 color: ColorsHelper.white,
                 fontFamily: 'Roboto',

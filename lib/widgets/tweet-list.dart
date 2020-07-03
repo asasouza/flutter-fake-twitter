@@ -1,6 +1,8 @@
 // flutter
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// widgets
+import './tweet-item.dart';
 // providers
 import '../providers/tweet.dart';
 
@@ -29,13 +31,20 @@ class _TweetListState extends State<TweetList> {
   @override
   Widget build(BuildContext context) {
     final tweets = Provider.of<TweetProvider>(context).tweets;
-    print(tweets.length);
     return _isLoading
         ? Center(
             child: CircularProgressIndicator(),
           )
-        : Container(
-            child: Text('Timeline'),
+        : ListView.separated(
+            itemBuilder: (context, index) {
+              final tweet = tweets[index];
+              return TweetItem(tweet);
+            },
+            itemCount: tweets.length,
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+            padding: EdgeInsets.symmetric(vertical: 8),
           );
   }
 }

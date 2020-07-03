@@ -35,10 +35,10 @@ class TweetProvider extends ChangeNotifier {
             username: decodedResponse['tweet']['author']['username'],
           ),
           content: decodedResponse['tweet']['content'],
-          createdAt: decodedResponse['tweet']['createdAt'],
+          createdAt: DateTime.parse(decodedResponse['tweet']['createdAt']),
           id: decodedResponse['tweet']['id'],
           likesCount: 0,
-          updatedAt: decodedResponse['tweet']['updatedAt'],
+          updatedAt: DateTime.parse(decodedResponse['tweet']['updatedAt']),
         );
         _tweets.insert(0, tweet);
         notifyListeners();
@@ -69,10 +69,10 @@ class TweetProvider extends ChangeNotifier {
               username: tweet['author']['username'],
             ),
             content: tweet['content'],
-            createdAt: tweet['createdAt'],
+            createdAt: DateTime.parse(tweet['createdAt']),
             id: tweet['_id'],
             likesCount: tweet['likesCount'],
-            updatedAt: tweet['updatedAt'],
+            updatedAt: DateTime.parse(tweet['updatedAt']),
           ),
         );
       });

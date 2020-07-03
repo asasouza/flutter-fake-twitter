@@ -6,9 +6,9 @@ import 'user.dart';
 class Tweet {
   final User author;
   final String content;
-  final String createdAt;
+  final DateTime createdAt;
   final String id;
-  final String updatedAt;
+  final DateTime updatedAt;
   bool isLiked;
   int likesCount;
 
