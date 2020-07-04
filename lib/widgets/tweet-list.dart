@@ -37,8 +37,10 @@ class _TweetListState extends State<TweetList> {
           )
         : ListView.separated(
             itemBuilder: (context, index) {
-              final tweet = tweets[index];
-              return TweetItem(tweet);
+              return ChangeNotifierProvider.value(
+                child: TweetItem(),
+                value: tweets[index],
+              );
             },
             itemCount: tweets.length,
             separatorBuilder: (context, index) {

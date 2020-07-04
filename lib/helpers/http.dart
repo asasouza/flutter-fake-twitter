@@ -32,7 +32,7 @@ class HttpHelper {
   }) async {
     return http.post(
       url,
-      body: json.encode(body),
+      body: body != null ? json.encode(body) : null,
       headers: {
         "Content-Type": "application/json",
         "Authorization": token != null ? "Bearer $token" : "",
@@ -49,7 +49,7 @@ class HttpHelper {
   }) async {
     return http.put(
       url,
-      body: json.encode(body),
+      body: body != null ? json.encode(body) : null,
       headers: {
         "Content-Type": "application/json",
         "Authorization": token != null ? "Bearer $token" : "",
