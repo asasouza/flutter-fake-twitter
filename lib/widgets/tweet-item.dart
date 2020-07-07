@@ -1,6 +1,8 @@
 // flutter
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+// widgets
+import 'bounce-icon.dart';
 // models
 import '../models/tweet.dart';
 // providers
@@ -9,7 +11,6 @@ import '../providers/auth.dart';
 import '../helpers/colors.dart';
 
 class TweetItem extends StatelessWidget {
-  
   String _getCreatedElapsedTime(tweet) {
     final elapsed = DateTime.now().difference(tweet.createdAt);
     if (elapsed.inDays > 0) {
@@ -88,11 +89,19 @@ class TweetItem extends StatelessWidget {
                   children: <Widget>[
                     Container(
                       child: GestureDetector(
-                        child: Icon(
-                          tweet.isLiked ? Icons.favorite : Icons.favorite_border,
-                          size: 18,
-                          color: tweet.isLiked ? Colors.red : ColorsHelper.lightGray.shade600,
-                        ),
+                        child: tweet.isLiked
+                            ? BounceIcon(
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 18,
+                                ),
+                              )
+                            : Icon(
+                                Icons.favorite_border,
+                                color: ColorsHelper.lightGray.shade600,
+                                size: 18,
+                              ),
                         onTap: () {
                           tweet.toggleLike(auth.token);
                         },
@@ -106,7 +115,14 @@ class TweetItem extends StatelessWidget {
                     Container(
                       child: Text(
                         '${tweet.likesCount}',
-                        style: Theme.of(context).textTheme.display3.merge(TextStyle(fontSize: 13)),
+                        style: Theme.of(context).textTheme.display3.merge(
+                              TextStyle(
+                                fontSize: 13,
+                                color: tweet.isLiked
+                                    ? Colors.red
+                                    : ColorsHelper.lightGray.shade600,
+                              ),
+                            ),
                       ),
                       margin: EdgeInsets.only(top: 2),
                       constraints: BoxConstraints(minWidth: 40),
