@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
 import '../widgets/main-drawer.dart';
+import '../widgets/rounded-button.dart';
 import '../widgets/scaffold-container.dart';
 import '../widgets/tweet-list.dart';
 // screens
 import './new-tweet.dart';
 // providers
 import '../providers/user.dart';
+import '../providers/tweet.dart';
 // helpers
 import '../helpers/colors.dart';
 
@@ -23,16 +25,46 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> _tabRoutes;
 
   int _selectedTab = 0;
+  int _offset = 0;
+  final _limit = 10;
+  bool _moreResults = true;
+  bool _requesting = false;
 
   @override
   initState() {
     super.initState();
     Provider.of<UserProvider>(context, listen: false).populateDataFromStorage();
 
+    fetchTweets();
+
     _tabRoutes = [
-      TweetList(),
+      TweetList(
+        onScroll: fetchTweets,
+        moreResults: _moreResults,
+        noContent: EmptyList(() {
+          _onTabChange(1);
+        }),
+      ),
       Text('Search'),
     ];
+  }
+
+  void fetchTweets() {
+    if (!_requesting && _moreResults) {
+      setState(() {
+        _requesting = true;
+      });
+      Provider.of<TweetProvider>(context, listen: false)
+          .fetchAndSet(offset: _offset, limit: _limit)
+          .then((moreResults) {
+            print('fetched more $_offset - $moreResults');
+        setState(() {
+          _moreResults = moreResults;
+          _offset += _limit;
+          _requesting = false;
+        });
+      });
+    }
   }
 
   void _onTabChange(index) {
@@ -118,6 +150,41 @@ class _HomeScreenState extends State<HomeScreen> {
             onPressed: () => this._openNewTweet(context),
           );
         },
+      ),
+    );
+  }
+}
+
+class EmptyList extends StatelessWidget {
+  final Function _navigate;
+
+  EmptyList(this._navigate);
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Padding(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              'Welcome to Twitter!',
+              style: Theme.of(context).textTheme.title,
+            ),
+            SizedBox(height: 20),
+            Text(
+              'This is the best place to see what\'s happening in your world. Find some people and topics to follow now.',
+              style: Theme.of(context).textTheme.display1,
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 20),
+            SizedBox(
+              child: RoundedButton(label: 'Let\'s go', onPress: _navigate),
+              width: 100,
+            )
+          ],
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 50),
       ),
     );
   }

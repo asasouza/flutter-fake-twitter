@@ -48,17 +48,18 @@ class TweetProvider extends ChangeNotifier {
     });
   }
 
-  Future<void> fetchAndSet({int offset, int limit}) async {
+  Future<bool> fetchAndSet({int offset, int limit}) async {
     return HttpHelper.get(
             '${Constants.baseURL}/tweets?offset=$offset&limit=$limit',
             token: authToken)
         .then((response) {
       if (response.statusCode != 200) {
-        return;
+        return false;
       }
       final List<Tweet> loadedTweets = [];
       final decodedResponse =
           json.decode(response.body) as Map<String, dynamic>;
+
       decodedResponse['tweets'].forEach((tweet) {
         loadedTweets.add(
           Tweet(
@@ -78,6 +79,7 @@ class TweetProvider extends ChangeNotifier {
       });
       _tweets = [..._tweets, ...loadedTweets];
       notifyListeners();
+      return decodedResponse['moreResults'];
     });
   }
 }
