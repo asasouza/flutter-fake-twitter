@@ -35,29 +35,28 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     Provider.of<UserProvider>(context, listen: false).populateDataFromStorage();
 
-    fetchTweets();
+    _fetchTweets();
 
     _tabRoutes = [
-      TweetList(
-        onScroll: fetchTweets,
-        moreResults: _moreResults,
-        noContent: EmptyList(() {
-          _onTabChange(1);
-        }),
-      ),
+      // TweetList(
+      //   onScroll: fetchTweets,
+      //   moreResults: _moreResults,
+      //   noContent: EmptyList(() {
+      //     _onTabChange(1);
+      //   }),
+      // ),
       Text('Search'),
     ];
   }
 
-  void fetchTweets() {
+  Future<Null> _fetchTweets() {
     if (!_requesting && _moreResults) {
       setState(() {
         _requesting = true;
       });
-      Provider.of<TweetProvider>(context, listen: false)
+      return Provider.of<TweetProvider>(context, listen: false)
           .fetchAndSet(offset: _offset, limit: _limit)
           .then((moreResults) {
-            print('fetched more $_offset - $moreResults');
         setState(() {
           _moreResults = moreResults;
           _offset += _limit;
@@ -65,6 +64,15 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       });
     }
+    return null;
+  }
+
+  Future<void> _refreshTweets() {
+    setState(() {
+      _moreResults = true;
+      _offset = 0;
+    });
+    return _fetchTweets();
   }
 
   void _onTabChange(index) {
@@ -107,7 +115,14 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Container(
         color: ColorsHelper.darkBlue,
-        child: _tabRoutes[_selectedTab],
+        child: TweetList(
+          onScroll: _fetchTweets,
+          moreResults: _moreResults,
+          noContent: EmptyList(() {
+            _onTabChange(1);
+          }),
+          onRefresh: _refreshTweets,
+        ),
         height: double.infinity,
         width: double.infinity,
       ),

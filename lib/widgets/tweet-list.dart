@@ -10,11 +10,13 @@ class TweetList extends StatefulWidget {
   final bool moreResults;
   final Widget noContent;
   final Function onScroll;
+  final Function onRefresh;
 
   TweetList({
     @required this.moreResults,
     @required this.noContent,
     @required this.onScroll,
+    @required this.onRefresh,
   });
 
   @override
@@ -22,7 +24,9 @@ class TweetList extends StatefulWidget {
 }
 
 class _TweetListState extends State<TweetList> {
-  ScrollController _scrollController = new ScrollController();
+  final ScrollController _scrollController = new ScrollController();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   @override
   void initState() {
@@ -30,11 +34,11 @@ class _TweetListState extends State<TweetList> {
 
     _scrollController
       ..addListener(() {
-        var onScrollThreshold = 0.8 * _scrollController.position.maxScrollExtent;
+        var onScrollThreshold =
+            0.8 * _scrollController.position.maxScrollExtent;
         if (_scrollController.position.pixels >= onScrollThreshold) {
-              widget.onScroll();
-              print('In the end - ${widget.moreResults}');
-            }
+          widget.onScroll();
+        }
       });
   }
 
@@ -42,19 +46,39 @@ class _TweetListState extends State<TweetList> {
   Widget build(BuildContext context) {
     final tweets = Provider.of<TweetProvider>(context).tweets;
     if (tweets.length > 0) {
-      return ListView.separated(
-        controller: _scrollController,
-        itemBuilder: (context, index) {
-          return ChangeNotifierProvider.value(
-            child: TweetItem(),
-            value: tweets[index],
-          );
-        },
-        itemCount: tweets.length,
-        separatorBuilder: (context, index) {
-          return Divider();
-        },
-        padding: EdgeInsets.symmetric(vertical: 8),
+      return RefreshIndicator(
+        child: ListView.separated(
+          controller: _scrollController,
+          itemBuilder: (context, index) {
+            return Column(
+              children: <Widget>[
+                ChangeNotifierProvider.value(
+                  child: TweetItem(),
+                  value: tweets[index],
+                ),
+                if (index == tweets.length - 1 && widget.moreResults)
+                  Padding(
+                    child: SizedBox(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2.5,
+                      ),
+                      height: 15,
+                      width: 15,
+                    ),
+                    padding: EdgeInsets.only(top: 20, bottom: 10),
+                  ),
+              ],
+            );
+          },
+          itemCount: tweets.length,
+          separatorBuilder: (context, index) {
+            return Divider();
+          },
+          padding: EdgeInsets.symmetric(vertical: 8),
+        ),
+        key: _refreshIndicatorKey,
+        onRefresh: widget.onRefresh,
+
       );
     } else if (widget.moreResults) {
       return Center(
