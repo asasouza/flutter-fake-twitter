@@ -2,11 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // providers
+import '../providers/auth.dart';
 import '../providers/user.dart';
 // helpers
 import '../helpers/colors.dart';
 
 class MainDrawer extends StatelessWidget {
+  
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
@@ -105,6 +107,18 @@ class MainDrawer extends StatelessWidget {
                       dense: true,
                       title: Text(
                         'Settings and privacy',
+                        style: TextStyle(fontSize: 18),
+                      ),
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                      leading: Icon(Icons.exit_to_app, color: Colors.white,),
+                      onTap: () {
+                        Provider.of<AuthProvider>(context, listen: false).logout();
+                      },
+                      title: Text(
+                        'Logout',
                         style: TextStyle(fontSize: 18),
                       ),
                     )

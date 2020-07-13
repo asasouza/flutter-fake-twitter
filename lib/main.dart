@@ -12,6 +12,7 @@ import './screens/settings/picture.dart';
 import './screens/signup/signup-email-user.dart';
 import './screens/signup/signup-password.dart';
 import './screens/splash.dart';
+import './screens/tweet.dart';
 // helpers
 import './helpers/colors.dart';
 
@@ -62,6 +63,7 @@ class MyApp extends StatelessWidget {
             SignupEmailAndUserScreen.routeName: (_) =>
                 SignupEmailAndUserScreen(),
             SignupPasswordScreen.routeName: (_) => SignupPasswordScreen(),
+            TweetScreen.routeName: (_) => TweetScreen(),
           },
           title: 'Flutter FakeTwitter',
           theme: ThemeData(

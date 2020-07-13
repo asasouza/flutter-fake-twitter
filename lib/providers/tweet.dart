@@ -18,6 +18,10 @@ class TweetProvider extends ChangeNotifier {
     return [..._tweets];
   }
 
+  Tweet findById(String id) {
+    return _tweets.firstWhere((tweet) => tweet.id == id);
+  }
+
   Future<bool> createTweet(String content) async {
     return HttpHelper.post(
       '${Constants.baseURL}/tweets',
