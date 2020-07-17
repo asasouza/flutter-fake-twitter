@@ -23,7 +23,12 @@ class _BounceIconState extends State<BounceIcon> with TickerProviderStateMixin {
       vsync: this,
     );
     _controller.forward();
+  }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
