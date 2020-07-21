@@ -1,4 +1,5 @@
 // flutter
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 // models
 import 'user.dart';
@@ -33,7 +34,7 @@ class Tweet extends ChangeNotifier {
     likesCount = isLiked ? likesCount - 1 : likesCount + 1;
     isLiked = !isLiked;
     notifyListeners();
-    
+
     HttpHelper.put(
       url,
       token: authToken,
@@ -43,6 +44,29 @@ class Tweet extends ChangeNotifier {
         isLiked = oldIsLiked;
         notifyListeners();
       }
+    });
+  }
+
+  Future<List<User>> fetchLikes(int offset, int limit) {
+    final url =
+        '${Constants.baseURL}/tweets/$id/likes?offset=$offset&limit=$limit';
+    return HttpHelper.get(url).then((response) {
+      final List<User> loadedLikes = [];
+      if (response.statusCode == 200) {
+        final decodedResponse =
+            json.decode(response.body) as Map<String, dynamic>;
+        decodedResponse['likes'].forEach((user) {
+          loadedLikes.add(
+            User(
+              id: user['id'],
+              picture: user['picture'],
+              pictureThumb: user['pictureThumb'],
+              username: user['username'],
+            ),
+          );
+        });
+      }
+      return loadedLikes;
     });
   }
 }

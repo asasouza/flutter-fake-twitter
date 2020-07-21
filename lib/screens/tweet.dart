@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 // widgets
 import '../widgets/bounce-icon.dart';
 import '../widgets/scaffold-container.dart';
+// Models
+import '../models/tweet.dart';
+import '../models/user.dart';
 // providers
 import '../providers/auth.dart';
 import '../providers/tweet.dart';
@@ -20,13 +23,26 @@ class TweetScreen extends StatefulWidget {
 class _TweetScreenState extends State<TweetScreen> {
   final DateFormat dateFormatter = DateFormat('H:m • d MMM yy');
   final NumberFormat numberFormatter = NumberFormat('##,###');
+  List<User> tweetLikes = [];
+  bool loadingLikes = true;
+
+  void fetchLikes(Tweet tweet) {
+    tweet.fetchLikes(0, 9999).then((likes) {
+      setState(() {
+        tweetLikes = likes;
+        loadingLikes = false;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, String>;
     final auth = Provider.of<AuthProvider>(context, listen: false);
-    final tweet = Provider.of<TweetProvider>(context, listen: false).findById(args['id']);
+    final tweet =
+        Provider.of<TweetProvider>(context, listen: false).findById(args['id']);
+    fetchLikes(tweet);
     return ScaffoldContainer(
       appBar: AppBar(
         centerTitle: false,
@@ -161,9 +177,22 @@ class _TweetScreenState extends State<TweetScreen> {
                           .body2
                           .copyWith(fontWeight: FontWeight.w600)),
                   color: ColorsHelper.darkGray.withOpacity(0.1),
+                  margin: EdgeInsets.only(bottom: 20),
                   padding: EdgeInsets.only(bottom: 7.5, left: 30, top: 7.5),
                   width: double.infinity,
                 ),
+                if (loadingLikes)
+                  Center(
+                    child: SizedBox(
+                      child: CircularProgressIndicator(strokeWidth: 2,),
+                      height: 15,
+                      width: 15,
+                    ),
+                  ),
+                for (var user in tweetLikes)
+                  Container(
+                    child: Text(user.username),
+                  ),
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
             ),
