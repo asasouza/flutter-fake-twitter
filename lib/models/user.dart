@@ -1,17 +1,28 @@
 import 'package:flutter/foundation.dart';
 
-class User {
+class User extends ChangeNotifier {
+  final String bio;
   final String id;
-  // final String name;
+  bool following;
+  final String name;
   final String picture;
   final String pictureThumb;
   final String username;
 
   User({
+    this.bio,
     @required this.id,
-    // @required this.name,
+    this.following = false,
+    this.name,
     @required this.picture,
     @required this.pictureThumb,
     @required this.username,
   });
+
+  toggleFollow() {
+    this.following = !this.following;
+    notifyListeners();
+  }
+
+
 }

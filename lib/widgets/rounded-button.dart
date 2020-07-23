@@ -5,12 +5,16 @@ class RoundedButton extends StatelessWidget {
   final bool isLoading;
   final String label;
   final Function onPress;
+  final bool outline;
+  final double padding;
 
   RoundedButton({
     this.disabled = false,
     this.isLoading = false,
     @required this.label,
     this.onPress,
+    this.outline = false,
+    this.padding = 7,
   });
 
   @override
@@ -32,22 +36,31 @@ class RoundedButton extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 17,
                   fontWeight: FontWeight.bold,
-                  color: this.disabled
-                      ? Colors.white.withOpacity(0.6)
-                      : Colors.white,
+                  color: this.outline
+                      ? Theme.of(context).accentColor
+                      : (this.disabled
+                          ? Colors.white.withOpacity(0.6)
+                          : Colors.white),
                 ),
               ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.all(
             Radius.circular(20),
           ),
-          color: this.disabled
-              ? Theme.of(context).accentColor.withOpacity(0.8)
-              : Theme.of(context).accentColor,
+          border: this.outline
+              ? Border.all(color: Theme.of(context).accentColor, width: 2)
+              : null,
+          color: this.outline
+              ? Colors.transparent
+              : (this.disabled
+                  ? Theme.of(context).accentColor.withOpacity(0.8)
+                  : Theme.of(context).accentColor),
         ),
-        padding: EdgeInsets.all(7),
+        padding: EdgeInsets.all(this.padding),
       ),
-      onTap: this.disabled || this.isLoading ? () {} : Feedback.wrapForTap(this.onPress, context),
+      onTap: this.disabled || this.isLoading
+          ? () {}
+          : Feedback.wrapForTap(this.onPress, context),
     );
   }
 }

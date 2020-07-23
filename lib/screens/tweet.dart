@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 // widgets
 import '../widgets/bounce-icon.dart';
 import '../widgets/scaffold-container.dart';
+import '../widgets/user-item.dart';
 // Models
 import '../models/tweet.dart';
 import '../models/user.dart';
@@ -184,14 +185,20 @@ class _TweetScreenState extends State<TweetScreen> {
                 if (loadingLikes)
                   Center(
                     child: SizedBox(
-                      child: CircularProgressIndicator(strokeWidth: 2,),
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
                       height: 15,
                       width: 15,
                     ),
                   ),
                 for (var user in tweetLikes)
-                  Container(
-                    child: Text(user.username),
+                  ChangeNotifierProvider.value(
+                    child: Container(
+                      child: UserItem(),
+                      padding: EdgeInsets.symmetric(horizontal: 15),
+                    ),
+                    value: user,
                   ),
               ],
               crossAxisAlignment: CrossAxisAlignment.start,
