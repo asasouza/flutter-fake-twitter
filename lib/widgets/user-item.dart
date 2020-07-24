@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
 import './rounded-button.dart';
+// providers
+import '../providers/auth.dart';
+import '../providers/user.dart';
 // model
 import '../models/user.dart';
 
 class UserItem extends StatelessWidget {
-  // final User user;
-
-  // UserItem(this.user);
-
-  void _toggleFollow(User user) {
-    print('teste');
-    user.toggleFollow();
+  void _toggleFollow(BuildContext context) {
+    final user = Provider.of<User>(context, listen: false);
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    user.toggleFollow(auth.token);
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
-    print('build!!');
+    final userLogged = Provider.of<UserProvider>(context, listen: false).user;
     return Padding(
       child: Row(
         children: <Widget>[
@@ -59,16 +59,17 @@ class UserItem extends StatelessWidget {
             ],
             crossAxisAlignment: CrossAxisAlignment.start,
           ),
-          SizedBox(
-            child: RoundedButton(
-              label: user.following ? 'Following' : 'Follow',
-              onPress: () => this._toggleFollow(user),
-              outline: !user.following,
-              padding: 0,
+          if (user.id != userLogged.id)
+            SizedBox(
+              child: RoundedButton(
+                label: user.following ? 'Following' : 'Follow',
+                onPress: () => this._toggleFollow(context),
+                outline: !user.following,
+                padding: 0,
+              ),
+              height: 33,
+              width: 100,
             ),
-            height: 33,
-            width: 100,
-          ),
         ],
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,

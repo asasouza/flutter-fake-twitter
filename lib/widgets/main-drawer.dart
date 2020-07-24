@@ -25,17 +25,17 @@ class MainDrawer extends StatelessWidget {
                       radius: 35,
                       backgroundColor: ColorsHelper.darkGray,
                       child: Image.network(
-                        user['picture'],
+                        user.picture,
                       ),
                     ),
                     SizedBox(height: 15),
                     Text(
-                      user['name'],
+                      user.name,
                       style: Theme.of(context).textTheme.title,
                     ),
                     SizedBox(height: 5),
                     Text(
-                      '@${user['username']}',
+                      '@${user.username}',
                       style: TextStyle(
                         color: ColorsHelper.darkGray,
                         fontSize: 18,

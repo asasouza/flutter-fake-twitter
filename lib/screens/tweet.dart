@@ -22,10 +22,23 @@ class TweetScreen extends StatefulWidget {
 }
 
 class _TweetScreenState extends State<TweetScreen> {
-  final DateFormat dateFormatter = DateFormat('H:m • d MMM yy');
+  final DateFormat dateFormatter = DateFormat('HH:mm • d MMM yy');
+  bool loadingLikes = true;
   final NumberFormat numberFormatter = NumberFormat('##,###');
   List<User> tweetLikes = [];
-  bool loadingLikes = true;
+
+  @override
+  void initState() {
+    super.initState();
+
+    new Future.delayed(Duration.zero, () {
+      final args =
+          ModalRoute.of(context).settings.arguments as Map<String, String>;
+      final tweet = Provider.of<TweetProvider>(context, listen: false)
+          .findById(args['id']);
+      this.fetchLikes(tweet);
+    });
+  }
 
   void fetchLikes(Tweet tweet) {
     tweet.fetchLikes(0, 9999).then((likes) {
@@ -38,12 +51,12 @@ class _TweetScreenState extends State<TweetScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, String>;
-    final auth = Provider.of<AuthProvider>(context, listen: false);
     final tweet =
         Provider.of<TweetProvider>(context, listen: false).findById(args['id']);
-    fetchLikes(tweet);
+
     return ScaffoldContainer(
       appBar: AppBar(
         centerTitle: false,

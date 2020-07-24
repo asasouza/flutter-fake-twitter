@@ -19,7 +19,7 @@ class User extends ChangeNotifier {
     @required this.username,
   });
 
-  toggleFollow() {
+  toggleFollow(String authToken) {
     this.following = !this.following;
     notifyListeners();
   }

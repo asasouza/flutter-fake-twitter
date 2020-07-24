@@ -80,7 +80,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: ColorsHelper.darkGray,
-                    child: Image.network(user['picture']),
+                    child: Image.network(user.picture),
                     radius: 20,
                   ),
                   Form(

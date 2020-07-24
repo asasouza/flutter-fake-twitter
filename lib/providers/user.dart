@@ -5,6 +5,8 @@ import 'dart:io';
 // flutter
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+// models
+import '../models/user.dart';
 // helpers
 import '../helpers/constants.dart';
 import '../helpers/http.dart';
@@ -12,6 +14,7 @@ import '../helpers/http.dart';
 class UserProvider extends ChangeNotifier {
   final String authToken;
   String _bio;
+  String _id;
   String _name;
   String _picture;
   String _pictureThumb;
@@ -21,14 +24,15 @@ class UserProvider extends ChangeNotifier {
     populateDataFromStorage();
   }
 
-  Map<String, String> get user {
-    return {
-      'bio': _bio,
-      'name': _name,
-      'picture': _picture,
-      'pictureThumb': _pictureThumb,
-      'username': _username,
-    };
+  User get user {
+    return User(
+      bio: _bio,
+      id: _id,
+      name: _name,
+      picture: _picture,
+      pictureThumb: _pictureThumb,
+      username: _username,
+    );
   }
 
   Future<bool> updateUserInfo({
@@ -102,6 +106,7 @@ class UserProvider extends ChangeNotifier {
       }
       final data = json.decode(storage.getString(Constants.storageUserKey));
       _bio = data['bio'];
+      _id = data['id'];
       _name = data['name'];
       _picture = data['picture'];
       _pictureThumb = data['pictureThumb'];
