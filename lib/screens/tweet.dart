@@ -1,4 +1,5 @@
 // flutter
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -26,6 +27,7 @@ class _TweetScreenState extends State<TweetScreen> {
   bool loadingLikes = true;
   final NumberFormat numberFormatter = NumberFormat('##,###');
   List<User> tweetLikes = [];
+  static final numberRetweets = Random().nextInt(100);
 
   @override
   void initState() {
@@ -136,10 +138,21 @@ class _TweetScreenState extends State<TweetScreen> {
                   children: <Widget>[
                     Container(
                       child: Text(
-                        numberFormatter.format(tweet.likesCount),
+                        numberFormatter.format(numberRetweets),
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       margin: EdgeInsets.only(right: 5),
+                    ),
+                    Text(
+                      'Retweets',
+                      style: Theme.of(context).textTheme.display3,
+                    ),
+                    Container(
+                      child: Text(
+                        numberFormatter.format(tweet.likesCount),
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      margin: EdgeInsets.only(left: 20, right: 5),
                     ),
                     Text(
                       'Likes',
@@ -151,30 +164,35 @@ class _TweetScreenState extends State<TweetScreen> {
                   child: Divider(),
                   margin: EdgeInsets.symmetric(vertical: 5),
                 ),
-                Container(
-                  alignment: Alignment.topLeft,
-                  child: GestureDetector(
-                    child: tweet.isLiked
-                        ? BounceIcon(
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                              size: 25,
-                            ),
-                          )
-                        : Icon(
-                            Icons.favorite_border,
-                            color: ColorsHelper.lightGray.shade600,
-                            size: 25,
-                          ),
-                    onTap: () {
-                      tweet.toggleLike(auth.token);
-                      setState(() {});
-                    },
-                  ),
-                  padding: EdgeInsets.only(
-                    left: 25,
-                  ),
+                Row(
+                  children: <Widget>[
+                    Container(child: Icon(Icons.chat_bubble_outline, size: 22),),
+                    Container(child: Icon(Icons.swap_horiz, size: 30),),
+                    Container(
+                      child: GestureDetector(
+                        child: tweet.isLiked
+                            ? BounceIcon(
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 25,
+                                ),
+                              )
+                            : Icon(
+                                Icons.favorite_border,
+                                color: ColorsHelper.lightGray.shade600,
+                                size: 25,
+                              ),
+                        onTap: () {
+                          tweet.toggleLike(auth.token);
+                          setState(() {});
+                        },
+                      ),
+                    ),
+                    Container(child: Icon(Icons.share, size: 22),),
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                 ),
               ],
             ),

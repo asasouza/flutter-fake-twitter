@@ -141,6 +141,10 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: Icon(Icons.search),
               title: Text(''),
             ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.notifications_none),
+              title: Text(''),
+            ),
           ],
           onTap: this._onTabChange,
           selectedItemColor: ColorsHelper.lightBlue,

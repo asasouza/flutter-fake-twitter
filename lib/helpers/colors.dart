@@ -17,7 +17,7 @@ class ColorsHelper {
   }
 
   static MaterialColor get lightGray {
-    return MaterialColor(0xFFAAB8C2, {
+    return const MaterialColor(0xFFAAB8C2, {
       50: Color.fromRGBO(170, 184, 194, .1),
       100: Color.fromRGBO(170, 184, 194, .2),
       200: Color.fromRGBO(170, 184, 194, .3),

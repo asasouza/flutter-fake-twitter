@@ -1,8 +1,10 @@
 // flutter
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
 import 'bounce-icon.dart';
+import 'icon-button.dart' as FT;
 // models
 import '../models/tweet.dart';
 // providers
@@ -29,6 +31,9 @@ class TweetItem extends StatelessWidget {
     }
     return 'now';
   }
+  static final random = new Random();
+  final int numberComments = random.nextInt(100);
+  final int numberRetweets = random.nextInt(100);
 
   @override
   Widget build(BuildContext context) {
@@ -91,48 +96,54 @@ class TweetItem extends StatelessWidget {
                 Container(
                   child: Row(
                     children: <Widget>[
-                      Container(
-                        child: GestureDetector(
-                          child: tweet.isLiked
-                              ? BounceIcon(
-                                  Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 18,
-                                  ),
-                                )
-                              : Icon(
-                                  Icons.favorite_border,
-                                  color: ColorsHelper.lightGray.shade600,
+                      FT.IconButton(
+                        icon: Icon(
+                          Icons.chat_bubble_outline,
+                          size: 16,
+                        ),
+                        text: this.numberComments.toString(),
+                        onPress: () {},
+                      ),
+                      FT.IconButton(
+                        icon: Icon(
+                          Icons.swap_horiz,
+                          size: 18,
+                        ),
+                        text: this.numberRetweets.toString(),
+                        onPress: () {},
+                      ),
+                      FT.IconButton(
+                        color: tweet.isLiked
+                            ? Colors.red
+                            : ColorsHelper.lightGray.shade600,
+                        icon: tweet.isLiked
+                            ? BounceIcon(
+                                Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
                                   size: 18,
                                 ),
-                          onTap: () {
-                            tweet.toggleLike(auth.token);
-                          },
-                        ),
-                        padding: EdgeInsets.only(
-                          top: 5,
-                          right: 10,
-                          bottom: 5,
-                        ),
-                      ),
-                      Container(
-                        child: Text(
-                          '${tweet.likesCount}',
-                          style: Theme.of(context).textTheme.display3.merge(
-                                TextStyle(
-                                  fontSize: 13,
-                                  color: tweet.isLiked
-                                      ? Colors.red
-                                      : ColorsHelper.lightGray.shade600,
-                                ),
+                              )
+                            : Icon(
+                                Icons.favorite_border,
+                                color: ColorsHelper.lightGray.shade600,
+                                size: 18,
                               ),
+                        onPress: () {
+                          tweet.toggleLike(auth.token);
+                        },
+                        text: tweet.likesCount.toString(),
+                      ),
+                      FT.IconButton(
+                        icon: Icon(
+                          Icons.share,
+                          size: 16,
                         ),
-                        margin: EdgeInsets.only(top: 2),
-                        constraints: BoxConstraints(minWidth: 40),
-                      )
+                        text: '',
+                        onPress: () {},
+                      ),
                     ],
-                    mainAxisAlignment: MainAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   ),
                   padding: EdgeInsets.only(right: 80),
                   width: MediaQuery.of(context).size.width - 95,
@@ -146,9 +157,8 @@ class TweetItem extends StatelessWidget {
         padding: EdgeInsets.only(left: 15, right: 15, top: 5),
       ),
       onTap: () {
-        Navigator.of(context).pushNamed(TweetScreen.routeName, arguments: {
-          'id': tweet.id
-        });
+        Navigator.of(context)
+            .pushNamed(TweetScreen.routeName, arguments: {'id': tweet.id});
       },
     );
   }

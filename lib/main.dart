@@ -79,6 +79,7 @@ class MyApp extends StatelessWidget {
               color: ColorsHelper.lightGray,
               thickness: 0.2,
             ),
+            iconTheme: IconThemeData(color: ColorsHelper.lightGray.shade600),
             primarySwatch: ColorsHelper.darkBlue,
             textTheme: ThemeData.dark().textTheme.copyWith(
                   body1: TextStyle(
