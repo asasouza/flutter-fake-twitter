@@ -7,9 +7,11 @@ import 'bounce-icon.dart';
 import 'icon-button.dart' as FT;
 // models
 import '../models/tweet.dart';
+import '../models/user.dart';
 // providers
 import '../providers/auth.dart';
 // screens
+import '../screens/profile.dart';
 import '../screens/tweet.dart';
 // helpers
 import '../helpers/colors.dart';
@@ -31,9 +33,15 @@ class TweetItem extends StatelessWidget {
     }
     return 'now';
   }
+
   static final random = new Random();
   final int numberComments = random.nextInt(100);
   final int numberRetweets = random.nextInt(100);
+
+  void _navigateProfile(BuildContext context, User user) {
+    Navigator.of(context)
+        .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,31 +52,42 @@ class TweetItem extends StatelessWidget {
       child: Padding(
         child: Row(
           children: <Widget>[
-            Container(
-              child: CircleAvatar(
-                backgroundColor: Colors.grey,
-                // child: Image.network(tweet.author.pictureThumb),
-                radius: 25,
+            GestureDetector(
+              child: Container(
+                child: CircleAvatar(
+                  backgroundColor: Colors.grey,
+                  // child: Image.network(tweet.author.pictureThumb),
+                  radius: 25,
+                ),
+                margin: EdgeInsets.only(right: 15),
               ),
-              margin: EdgeInsets.only(right: 15),
+              onTap: () => this._navigateProfile(context, tweet.author),
             ),
             Column(
               children: <Widget>[
                 Row(
                   children: <Widget>[
-                    Container(
-                      child: Text(
-                        'Author Name',
-                        style: Theme.of(context).textTheme.display2,
+                    GestureDetector(
+                      child: Row(
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              'Author Name',
+                              style: Theme.of(context).textTheme.display2,
+                            ),
+                            margin: EdgeInsets.only(right: 7),
+                          ),
+                          Container(
+                            child: Text(
+                              '@${tweet.author.username}',
+                              style: Theme.of(context).textTheme.display3,
+                            ),
+                            margin: EdgeInsets.only(right: 3),
+                          ),
+                        ],
                       ),
-                      margin: EdgeInsets.only(right: 7),
-                    ),
-                    Container(
-                      child: Text(
-                        '@${tweet.author.username}',
-                        style: Theme.of(context).textTheme.display3,
-                      ),
-                      margin: EdgeInsets.only(right: 3),
+                      onTap: () =>
+                          this._navigateProfile(context, tweet.author),
                     ),
                     Container(
                       child: Text(

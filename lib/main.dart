@@ -9,6 +9,7 @@ import './screens/login.dart';
 import './screens/settings/name-description.dart';
 import './screens/new-tweet.dart';
 import './screens/settings/picture.dart';
+import './screens/profile.dart';
 import './screens/signup/signup-email-user.dart';
 import './screens/signup/signup-password.dart';
 import './screens/splash.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
           routes: {
             HomeScreen.routeName: (_) => HomeScreen(),
             NewTweetScreen.routeName: (_) => NewTweetScreen(),
+            ProfileScreen.routeName: (_) => ProfileScreen(),
             SettingsNameBioScreen.routeName: (_) => SettingsNameBioScreen(),
             SettingsPictureScreen.routeName: (_) => SettingsPictureScreen(),
             SignupEmailAndUserScreen.routeName: (_) =>

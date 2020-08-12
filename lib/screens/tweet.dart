@@ -7,12 +7,14 @@ import 'package:provider/provider.dart';
 import '../widgets/bounce-icon.dart';
 import '../widgets/scaffold-container.dart';
 import '../widgets/user-item.dart';
-// Models
+// models
 import '../models/tweet.dart';
 import '../models/user.dart';
 // providers
 import '../providers/auth.dart';
 import '../providers/tweet.dart';
+// screens
+import '../screens/profile.dart';
 // helpers
 import '../helpers/colors.dart';
 
@@ -51,6 +53,11 @@ class _TweetScreenState extends State<TweetScreen> {
     });
   }
 
+  void _navigateProfile(BuildContext context, User user) {
+    Navigator.of(context)
+        .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
@@ -79,37 +86,40 @@ class _TweetScreenState extends State<TweetScreen> {
           Padding(
             child: Column(
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Container(
-                      child: CircleAvatar(
-                        backgroundColor: Colors.grey,
-                        // child: Image.network(
-                        //   tweet.author.picture,
-                        // ),
-                        radius: 30,
+                GestureDetector(
+                  child: Row(
+                    children: <Widget>[
+                      Container(
+                        child: CircleAvatar(
+                          backgroundColor: Colors.grey,
+                          // child: Image.network(
+                          //   tweet.author.picture,
+                          // ),
+                          radius: 30,
+                        ),
+                        margin: EdgeInsets.only(right: 15),
                       ),
-                      margin: EdgeInsets.only(right: 15),
-                    ),
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          child: Text(
-                            'Author Name',
-                            style: Theme.of(context).textTheme.display2,
+                      Column(
+                        children: <Widget>[
+                          Container(
+                            child: Text(
+                              'Author Name',
+                              style: Theme.of(context).textTheme.display2,
+                            ),
+                            margin: EdgeInsets.only(bottom: 5),
                           ),
-                          margin: EdgeInsets.only(bottom: 5),
-                        ),
-                        Container(
-                          child: Text(
-                            '@${tweet.author.username}',
-                            style: Theme.of(context).textTheme.display3,
+                          Container(
+                            child: Text(
+                              '@${tweet.author.username}',
+                              style: Theme.of(context).textTheme.display3,
+                            ),
                           ),
-                        ),
-                      ],
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                    )
-                  ],
+                        ],
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                      )
+                    ],
+                  ),
+                  onTap: () => this._navigateProfile(context, tweet.author),
                 ),
                 Container(
                   alignment: Alignment.topLeft,
@@ -166,8 +176,12 @@ class _TweetScreenState extends State<TweetScreen> {
                 ),
                 Row(
                   children: <Widget>[
-                    Container(child: Icon(Icons.chat_bubble_outline, size: 22),),
-                    Container(child: Icon(Icons.swap_horiz, size: 30),),
+                    Container(
+                      child: Icon(Icons.chat_bubble_outline, size: 22),
+                    ),
+                    Container(
+                      child: Icon(Icons.swap_horiz, size: 30),
+                    ),
                     Container(
                       child: GestureDetector(
                         child: tweet.isLiked
@@ -189,7 +203,9 @@ class _TweetScreenState extends State<TweetScreen> {
                         },
                       ),
                     ),
-                    Container(child: Icon(Icons.share, size: 22),),
+                    Container(
+                      child: Icon(Icons.share, size: 22),
+                    ),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,

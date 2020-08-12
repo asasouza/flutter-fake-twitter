@@ -3,17 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
 import './rounded-button.dart';
+// models
+import '../models/user.dart';
 // providers
 import '../providers/auth.dart';
 import '../providers/user.dart';
-// model
-import '../models/user.dart';
+// screens
+import '../screens/profile.dart';
 
 class UserItem extends StatelessWidget {
   void _toggleFollow(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
     final auth = Provider.of<AuthProvider>(context, listen: false);
     user.toggleFollow(auth.token);
+  }
+
+  void _navigateProfile(BuildContext context, User user) {
+    Navigator.of(context)
+        .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
   }
 
   @override
@@ -23,41 +30,44 @@ class UserItem extends StatelessWidget {
     return Padding(
       child: Row(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Container(
-                child: CircleAvatar(
-                  // child: Image.network(user.pictureThumb),
-                  radius: 23,
-                  backgroundColor: Colors.grey,
+          GestureDetector(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  child: CircleAvatar(
+                    // child: Image.network(user.pictureThumb),
+                    radius: 23,
+                    backgroundColor: Colors.grey,
+                  ),
+                  margin: EdgeInsets.only(right: 10),
                 ),
-                margin: EdgeInsets.only(right: 10),
-              ),
-              Column(
-                children: <Widget>[
-                  Text(
-                    'User Name',
-                    style: Theme.of(context).textTheme.display2,
-                  ),
-                  SizedBox(
-                    height: 1,
-                  ),
-                  Text(
-                    '@${user.username}',
-                    style: Theme.of(context).textTheme.display3,
-                  ),
-                  SizedBox(
-                    height: 2,
-                  ),
-                  Text(
-                    'Bio do usuário',
-                    style: Theme.of(context).textTheme.body1,
-                  ),
-                ],
-                crossAxisAlignment: CrossAxisAlignment.start,
-              ),
-            ],
-            crossAxisAlignment: CrossAxisAlignment.start,
+                Column(
+                  children: <Widget>[
+                    Text(
+                      'User Name',
+                      style: Theme.of(context).textTheme.display2,
+                    ),
+                    SizedBox(
+                      height: 1,
+                    ),
+                    Text(
+                      '@${user.username}',
+                      style: Theme.of(context).textTheme.display3,
+                    ),
+                    SizedBox(
+                      height: 2,
+                    ),
+                    Text(
+                      'Bio do usuário',
+                      style: Theme.of(context).textTheme.body1,
+                    ),
+                  ],
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                ),
+              ],
+              crossAxisAlignment: CrossAxisAlignment.start,
+            ),
+            onTap: () => this._navigateProfile(context, user),
           ),
           if (user.id != userLogged.id)
             SizedBox(
