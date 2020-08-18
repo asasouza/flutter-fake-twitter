@@ -7,12 +7,14 @@ import './tweet-item.dart';
 import '../providers/tweet.dart';
 
 class TweetList extends StatefulWidget {
+  final Widget header;
   final bool moreResults;
   final Widget noContent;
   final Function onScroll;
   final Function onRefresh;
-
+  
   TweetList({
+    this.header,
     @required this.moreResults,
     @required this.noContent,
     @required this.onScroll,
@@ -52,6 +54,8 @@ class _TweetListState extends State<TweetList> {
           itemBuilder: (context, index) {
             return Column(
               children: <Widget>[
+                if (widget.header != null && index == 0)
+                widget.header,
                 ChangeNotifierProvider.value(
                   child: TweetItem(),
                   value: tweets[index],

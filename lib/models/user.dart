@@ -16,7 +16,7 @@ class User extends ChangeNotifier {
   final String pictureThumb;
   final int tweetsCount;
   final String username;
-  
+
   User({
     this.bio,
     this.followersCount = 0,
@@ -32,16 +32,26 @@ class User extends ChangeNotifier {
 
   Future<User> fetchInfo() {
     final url = '${Constants.baseURL}/users/$id';
-    print('call fetchIndo');
-    return HttpHelper.get(url)
-    .then((response) {
-      if(response.statusCode == 200) {
-        final decodedResponse = json.decode(response.body) as Map<String, dynamic>;
-        print(decodedResponse);
+    return HttpHelper.get(url).then((response) {
+      if (response.statusCode == 200) {
+        final decodedResponse =
+            json.decode(response.body) as Map<String, dynamic>;
+        final userData = decodedResponse['user'];
+        return User(
+          bio: userData['bio'],
+          followersCount: userData['followersCount'],
+          followingCount: userData['followingCount'],
+          id: userData['id'],
+          following: false,
+          name: userData['name'],
+          picture: userData['picture'],
+          pictureThumb: userData['pictureThumb'],
+          tweetsCount: userData['tweetsCount'],
+          username: userData['username'],
+        );
       }
       return this;
     });
-
   }
 
   void toggleFollow(String authToken) {

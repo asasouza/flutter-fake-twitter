@@ -111,6 +111,7 @@ class TweetItem extends StatelessWidget {
                     style: Theme.of(context).textTheme.body1,
                   ),
                   margin: EdgeInsets.only(top: 1, bottom: 5),
+                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 95),
                 ),
                 Container(
                   child: Row(
