@@ -12,7 +12,7 @@ class TweetList extends StatefulWidget {
   final Widget noContent;
   final Function onScroll;
   final Function onRefresh;
-  
+
   TweetList({
     this.header,
     @required this.moreResults,
@@ -54,8 +54,7 @@ class _TweetListState extends State<TweetList> {
           itemBuilder: (context, index) {
             return Column(
               children: <Widget>[
-                if (widget.header != null && index == 0)
-                widget.header,
+                if (widget.header != null && index == 0) widget.header,
                 ChangeNotifierProvider.value(
                   child: TweetItem(),
                   value: tweets[index],
@@ -82,14 +81,25 @@ class _TweetListState extends State<TweetList> {
         ),
         key: _refreshIndicatorKey,
         onRefresh: widget.onRefresh,
-
       );
     } else if (widget.moreResults) {
-      return Center(
-        child: CircularProgressIndicator(),
+      return Column(
+        children: <Widget>[
+          if (widget.header != null) widget.header,
+          Expanded(
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ],
       );
     } else {
-      return widget.noContent;
+      return Column(
+        children: <Widget>[
+          if (widget.header != null) widget.header,
+          widget.noContent,
+        ],
+      );
     }
   }
 }

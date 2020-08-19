@@ -8,6 +8,7 @@ import '../widgets/tweet-list.dart';
 // models
 import '../models/user.dart';
 // providers
+import '../providers/tweet.dart';
 import '../providers/user.dart';
 // helpers
 import '../helpers/colors.dart';
@@ -19,7 +20,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User user;
+  int _offset = 0;
+  final _limit = 10;
+  bool _moreResults = true;
+  bool _requesting = false;
+  User _user;
 
   @override
   void initState() {
@@ -28,14 +33,40 @@ class _ProfileScreenState extends State<ProfileScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final args =
           ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
-      final preloadedUser = args['user'];
-
+      final preloadedUser = args['user'] as User;
+      _fetchTweets(preloadedUser.id);
       preloadedUser.fetchInfo().then((User loadedUser) {
         setState(() {
-          user = loadedUser;
+          _user = loadedUser;
         });
       });
     });
+  }
+
+  Future<Null> _fetchTweets(String userId) {
+    if (!_requesting && _moreResults) {
+      setState(() {
+        _requesting = true;
+      });
+      return Provider.of<TweetProvider>(context, listen: false)
+          .fetchAndSet(offset: _offset, limit: _limit, userId: userId)
+          .then((moreResults) {
+        setState(() {
+          _moreResults = moreResults;
+          _offset += _limit;
+          _requesting = false;
+        });
+      });
+    }
+    return null;
+  }
+
+  Future<void> _refreshTweets(String userId) {
+    setState(() {
+      _moreResults = true;
+      _offset = 0;
+    });
+    return _fetchTweets(userId);
   }
 
   @override
@@ -61,23 +92,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SizedBox(
               height: 2,
             ),
-            if (user != null)
+            if (_user != null)
               Text(
-                '${user.tweetsCount} Tweets',
+                '${_user.tweetsCount} Tweets',
                 style: Theme.of(context).textTheme.display3,
               )
           ],
           crossAxisAlignment: CrossAxisAlignment.start,
         ),
       ),
-      // body: ProfileHeader(user: user, preloadedUser: preloadedUser));
       body: Container(
         child: TweetList(
-          header: ProfileHeader(user: user, preloadedUser: preloadedUser),
-          moreResults: false,
+          header: ProfileHeader(user: _user, preloadedUser: preloadedUser),
+          moreResults: _moreResults,
           noContent: Text('No content'),
-          onRefresh: () {},
-          onScroll: () {},
+          onRefresh: () => _refreshTweets(preloadedUser.id),
+          onScroll: () => _fetchTweets(preloadedUser.id),
         ),
         height: double.infinity,
         width: double.infinity,

@@ -52,9 +52,10 @@ class TweetProvider extends ChangeNotifier {
     });
   }
 
-  Future<bool> fetchAndSet({int offset, int limit}) async {
+  Future<bool> fetchAndSet({int offset, int limit, String userId}) async {
+    final isUserTweetsList = userId != null ? '/users/$userId' : '';
     return HttpHelper.get(
-            '${Constants.baseURL}/tweets?offset=$offset&limit=$limit',
+            '${Constants.baseURL}$isUserTweetsList/tweets?offset=$offset&limit=$limit',
             token: authToken)
         .then((response) {
       if (response.statusCode != 200) {

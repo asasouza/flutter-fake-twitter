@@ -59,7 +59,10 @@ class MyApp extends StatelessWidget {
           routes: {
             HomeScreen.routeName: (_) => HomeScreen(),
             NewTweetScreen.routeName: (_) => NewTweetScreen(),
-            ProfileScreen.routeName: (_) => ProfileScreen(),
+            ProfileScreen.routeName: (_) => ChangeNotifierProvider(
+                  create: (_) => TweetProvider(),
+                  child: ProfileScreen(),
+                ),
             SettingsNameBioScreen.routeName: (_) => SettingsNameBioScreen(),
             SettingsPictureScreen.routeName: (_) => SettingsPictureScreen(),
             SignupEmailAndUserScreen.routeName: (_) =>
