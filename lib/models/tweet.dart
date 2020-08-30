@@ -26,7 +26,13 @@ class Tweet extends ChangeNotifier {
     @required this.likesCount,
   });
 
-  void toggleLike(String authToken) {
+  void toggleLike(String authToken, {bool forceToggle, int numLikes}) {
+    if (forceToggle != null) {
+      likesCount = numLikes;
+      isLiked = forceToggle;
+      return notifyListeners();
+    }
+
     final oldIsLiked = isLiked;
     final oldLikesCount = likesCount;
     final url =

@@ -37,9 +37,8 @@ class _TweetScreenState extends State<TweetScreen> {
 
     new Future.delayed(Duration.zero, () {
       final args =
-          ModalRoute.of(context).settings.arguments as Map<String, String>;
-      final tweet = Provider.of<TweetProvider>(context, listen: false)
-          .findById(args['id']);
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final tweet = args['tweet'] as Tweet;
       this.fetchLikes(tweet);
     });
   }
@@ -58,13 +57,20 @@ class _TweetScreenState extends State<TweetScreen> {
         .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
   }
 
+  void _toggleLike(Tweet tweet, String token, BuildContext context) {
+    tweet.toggleLike(token);
+    final mainContextTweet =
+        Provider.of<TweetProvider>(context, listen: false).findById(tweet.id);
+    mainContextTweet.toggleLike(token, forceToggle: tweet.isLiked, numLikes: tweet.likesCount );
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final args =
-        ModalRoute.of(context).settings.arguments as Map<String, String>;
-    final tweet =
-        Provider.of<TweetProvider>(context, listen: false).findById(args['id']);
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final tweet = args['tweet'] as Tweet;
 
     return ScaffoldContainer(
       appBar: AppBar(
@@ -197,10 +203,8 @@ class _TweetScreenState extends State<TweetScreen> {
                                 color: ColorsHelper.lightGray.shade600,
                                 size: 25,
                               ),
-                        onTap: () {
-                          tweet.toggleLike(auth.token);
-                          setState(() {});
-                        },
+                        onTap: () =>
+                            this._toggleLike(tweet, auth.token, context),
                       ),
                     ),
                     Container(

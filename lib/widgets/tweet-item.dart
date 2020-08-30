@@ -10,6 +10,7 @@ import '../models/tweet.dart';
 import '../models/user.dart';
 // providers
 import '../providers/auth.dart';
+import '../providers/tweet.dart';
 // screens
 import '../screens/profile.dart';
 import '../screens/tweet.dart';
@@ -39,8 +40,18 @@ class TweetItem extends StatelessWidget {
   final int numberRetweets = random.nextInt(100);
 
   void _navigateProfile(BuildContext context, User user) {
-    Navigator.of(context)
+    if(ModalRoute.of(context).settings.name != ProfileScreen.routeName) {
+      Navigator.of(context)
         .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
+    }
+  }
+
+  void _toggleLike(Tweet tweet, String token, BuildContext context) {
+    // tweet.toggleLike(token);
+    final mainContextTweet =
+        Provider.of<TweetProvider>(context, listen: false).findById(tweet.id);
+    print(mainContextTweet == tweet);
+    mainContextTweet.toggleLike(token);
   }
 
   @override
@@ -86,8 +97,7 @@ class TweetItem extends StatelessWidget {
                           ),
                         ],
                       ),
-                      onTap: () =>
-                          this._navigateProfile(context, tweet.author),
+                      onTap: () => this._navigateProfile(context, tweet.author),
                     ),
                     Container(
                       child: Text(
@@ -111,7 +121,8 @@ class TweetItem extends StatelessWidget {
                     style: Theme.of(context).textTheme.body1,
                   ),
                   margin: EdgeInsets.only(top: 1, bottom: 5),
-                  constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width - 95),
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width - 95),
                 ),
                 Container(
                   child: Row(
@@ -149,9 +160,8 @@ class TweetItem extends StatelessWidget {
                                 color: ColorsHelper.lightGray.shade600,
                                 size: 18,
                               ),
-                        onPress: () {
-                          tweet.toggleLike(auth.token);
-                        },
+                        onPress: () =>
+                            this._toggleLike(tweet, auth.token, context),
                         text: tweet.likesCount.toString(),
                       ),
                       FT.IconButton(
@@ -178,7 +188,7 @@ class TweetItem extends StatelessWidget {
       ),
       onTap: () {
         Navigator.of(context)
-            .pushNamed(TweetScreen.routeName, arguments: {'id': tweet.id});
+            .pushNamed(TweetScreen.routeName, arguments: {'tweet': tweet});
       },
     );
   }

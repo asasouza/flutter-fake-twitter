@@ -82,7 +82,8 @@ class TweetProvider extends ChangeNotifier {
           ),
         );
       });
-      _tweets = [..._tweets, ...loadedTweets];
+      final previousTweets = offset > 0 ? _tweets : [];
+      _tweets = [...previousTweets, ...loadedTweets];
       notifyListeners();
       return decodedResponse['moreResults'];
     });
