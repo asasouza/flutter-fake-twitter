@@ -1,4 +1,6 @@
 // flutter
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
@@ -27,6 +29,7 @@ class UserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
     final userLogged = Provider.of<UserProvider>(context, listen: false).user;
+    final bytes = base64.decode(user.pictureThumb);
     return Padding(
       child: Row(
         children: <Widget>[
@@ -35,7 +38,10 @@ class UserItem extends StatelessWidget {
               children: <Widget>[
                 Container(
                   child: CircleAvatar(
-                    // child: Image.network(user.pictureThumb),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(23),
+                      child: Image.memory(bytes),
+                    ),
                     radius: 23,
                     backgroundColor: Colors.grey,
                   ),
@@ -44,7 +50,7 @@ class UserItem extends StatelessWidget {
                 Column(
                   children: <Widget>[
                     Text(
-                      'User Name',
+                      user.name,
                       style: Theme.of(context).textTheme.display2,
                     ),
                     SizedBox(
@@ -58,7 +64,7 @@ class UserItem extends StatelessWidget {
                       height: 2,
                     ),
                     Text(
-                      'Bio do usuário',
+                      user.bio,
                       style: Theme.of(context).textTheme.body1,
                     ),
                   ],

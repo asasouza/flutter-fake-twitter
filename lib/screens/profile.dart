@@ -1,4 +1,6 @@
 // flutter
+import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
@@ -8,6 +10,7 @@ import '../widgets/tweet-list.dart';
 // models
 import '../models/user.dart';
 // providers
+import '../providers/auth.dart';
 import '../providers/tweet.dart';
 import '../providers/user.dart';
 // helpers
@@ -34,8 +37,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final args =
           ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
       final preloadedUser = args['user'] as User;
+      final auth = Provider.of<AuthProvider>(context, listen: false);
       _fetchTweets(preloadedUser.id);
-      preloadedUser.fetchInfo().then((User loadedUser) {
+      preloadedUser.fetchInfo(authToken: auth.token).then((User loadedUser) {
         setState(() {
           _user = loadedUser;
         });
@@ -85,8 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         title: Column(
           children: <Widget>[
             Text(
-              // preloaded.name,
-              'User Name',
+              preloadedUser.name,
               style: Theme.of(context).textTheme.title.copyWith(fontSize: 20),
             ),
             SizedBox(
@@ -126,9 +129,16 @@ class ProfileHeader extends StatelessWidget {
   final User user;
   final User preloadedUser;
 
+  _renderMemberSince(DateTime createdAt) {
+    final DateFormat dateFormatter = DateFormat('MMMM yyyy');
+    final date = dateFormatter.format(createdAt);
+    return 'Member since $date';
+  }
+
   @override
   Widget build(BuildContext context) {
     final userLogged = Provider.of<UserProvider>(context, listen: false).user;
+    final bytes = base64.decode(preloadedUser.picture);
     return Column(
       children: <Widget>[
         Padding(
@@ -138,23 +148,26 @@ class ProfileHeader extends StatelessWidget {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: Colors.grey,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(45),
+                      child: Image.memory(bytes),
+                    ),
                     radius: 45,
                   ),
-                  // if(user != null && user.id != userLogged.id)
-                  if(user != null)
-                  Container(
-                    child: RoundedButton(
-                      label: user.following ? 'Unfollow' : 'Follow',
-                      onPress: () => user.toggleFollow(''),
-                      outline: !user.following,
-                    ),
-                    width: 120,
-                  )
+                  if (user != null && user.id != userLogged.id)
+                    Container(
+                      child: RoundedButton(
+                        label: user.following ? 'Unfollow' : 'Follow',
+                        onPress: () => user.toggleFollow(''),
+                        outline: !user.following,
+                      ),
+                      width: 120,
+                    )
                 ],
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
               ),
               SizedBox(height: 10),
-              Text('User Name',
+              Text(preloadedUser.name,
                   style:
                       Theme.of(context).textTheme.title.copyWith(fontSize: 22)),
               SizedBox(height: 3),
@@ -184,7 +197,7 @@ class ProfileHeader extends StatelessWidget {
                       width: 5,
                     ),
                     Text(
-                      'Member since Aug 2020',
+                      _renderMemberSince(user.createdAt),
                       style: Theme.of(context)
                           .textTheme
                           .display3

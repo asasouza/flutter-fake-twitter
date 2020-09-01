@@ -64,7 +64,10 @@ class Tweet extends ChangeNotifier {
         decodedResponse['likes'].forEach((user) {
           loadedLikes.add(
             User(
+              bio: user['bio'],
+              following: user['isFollowing'],
               id: user['id'],
+              name: user['name'],
               picture: user['picture'],
               pictureThumb: user['pictureThumb'],
               username: user['username'],

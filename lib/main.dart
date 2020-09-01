@@ -60,7 +60,7 @@ class MyApp extends StatelessWidget {
             HomeScreen.routeName: (_) => HomeScreen(),
             NewTweetScreen.routeName: (_) => NewTweetScreen(),
             ProfileScreen.routeName: (_) => ChangeNotifierProvider(
-                  create: (_) => TweetProvider(),
+                  create: (_) => TweetProvider(authToken: auth.token),
                   child: ProfileScreen(),
                 ),
             SettingsNameBioScreen.routeName: (_) => SettingsNameBioScreen(),

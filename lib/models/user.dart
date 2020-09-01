@@ -7,6 +7,7 @@ import '../helpers/http.dart';
 
 class User extends ChangeNotifier {
   final String bio;
+  final DateTime createdAt;
   int followersCount;
   final int followingCount;
   final String id;
@@ -19,6 +20,7 @@ class User extends ChangeNotifier {
 
   User({
     this.bio,
+    this.createdAt,
     this.followersCount = 0,
     this.followingCount = 0,
     @required this.id,
@@ -30,15 +32,16 @@ class User extends ChangeNotifier {
     @required this.username,
   });
 
-  Future<User> fetchInfo() {
+  Future<User> fetchInfo({ String authToken }) {
     final url = '${Constants.baseURL}/users/$id';
-    return HttpHelper.get(url).then((response) {
+    return HttpHelper.get(url, token: authToken).then((response) {
       if (response.statusCode == 200) {
         final decodedResponse =
             json.decode(response.body) as Map<String, dynamic>;
         final userData = decodedResponse['user'];
         return User(
           bio: userData['bio'],
+          createdAt: DateTime.parse(userData['createdAt']),
           followersCount: userData['followersCount'],
           followingCount: userData['followingCount'],
           id: userData['id'],
@@ -46,7 +49,7 @@ class User extends ChangeNotifier {
           name: userData['name'],
           picture: userData['picture'],
           pictureThumb: userData['pictureThumb'],
-          tweetsCount: userData['tweetsCount'],
+          tweetsCount: userData['totalTweets'],
           username: userData['username'],
         );
       }

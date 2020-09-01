@@ -34,6 +34,7 @@ class TweetProvider extends ChangeNotifier {
         final tweet = Tweet(
           author: User(
             id: decodedResponse['tweet']['author']['_id'],
+            name: decodedResponse['tweet']['author']['name'],
             picture: decodedResponse['tweet']['author']['picture'],
             pictureThumb: decodedResponse['tweet']['author']['pictureThumb'],
             username: decodedResponse['tweet']['author']['username'],
@@ -70,6 +71,7 @@ class TweetProvider extends ChangeNotifier {
           Tweet(
             author: User(
               id: tweet['author']['_id'],
+              name: tweet['author']['name'],
               picture: tweet['author']['picture'],
               pictureThumb: tweet['author']['pictureThumb'],
               username: tweet['author']['username'],
@@ -77,6 +79,7 @@ class TweetProvider extends ChangeNotifier {
             content: tweet['content'],
             createdAt: DateTime.parse(tweet['createdAt']),
             id: tweet['_id'],
+            isLiked: tweet['isLiked'],
             likesCount: tweet['likesCount'],
             updatedAt: DateTime.parse(tweet['updatedAt']),
           ),

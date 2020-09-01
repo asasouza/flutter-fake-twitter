@@ -1,4 +1,5 @@
 // flutter
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -61,7 +62,8 @@ class _TweetScreenState extends State<TweetScreen> {
     tweet.toggleLike(token);
     final mainContextTweet =
         Provider.of<TweetProvider>(context, listen: false).findById(tweet.id);
-    mainContextTweet.toggleLike(token, forceToggle: tweet.isLiked, numLikes: tweet.likesCount );
+    mainContextTweet.toggleLike(token,
+        forceToggle: tweet.isLiked, numLikes: tweet.likesCount);
     setState(() {});
   }
 
@@ -71,7 +73,7 @@ class _TweetScreenState extends State<TweetScreen> {
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     final tweet = args['tweet'] as Tweet;
-
+    final bytes = base64.decode(tweet.author.pictureThumb);
     return ScaffoldContainer(
       appBar: AppBar(
         centerTitle: false,
@@ -98,9 +100,10 @@ class _TweetScreenState extends State<TweetScreen> {
                       Container(
                         child: CircleAvatar(
                           backgroundColor: Colors.grey,
-                          // child: Image.network(
-                          //   tweet.author.picture,
-                          // ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(30),
+                            child: Image.memory(bytes),
+                          ),
                           radius: 30,
                         ),
                         margin: EdgeInsets.only(right: 15),
@@ -109,7 +112,7 @@ class _TweetScreenState extends State<TweetScreen> {
                         children: <Widget>[
                           Container(
                             child: Text(
-                              'Author Name',
+                              tweet.author.name,
                               style: Theme.of(context).textTheme.display2,
                             ),
                             margin: EdgeInsets.only(bottom: 5),

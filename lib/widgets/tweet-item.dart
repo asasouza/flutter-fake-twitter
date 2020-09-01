@@ -1,5 +1,7 @@
 // flutter
+import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // widgets
@@ -40,24 +42,24 @@ class TweetItem extends StatelessWidget {
   final int numberRetweets = random.nextInt(100);
 
   void _navigateProfile(BuildContext context, User user) {
-    if(ModalRoute.of(context).settings.name != ProfileScreen.routeName) {
+    if (ModalRoute.of(context).settings.name != ProfileScreen.routeName) {
       Navigator.of(context)
-        .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
+          .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
     }
   }
 
   void _toggleLike(Tweet tweet, String token, BuildContext context) {
-    // tweet.toggleLike(token);
-    final mainContextTweet =
-        Provider.of<TweetProvider>(context, listen: false).findById(tweet.id);
-    print(mainContextTweet == tweet);
-    mainContextTweet.toggleLike(token);
+    tweet.toggleLike(token);
+    // final mainContextTweet =
+    //     Provider.of<TweetProvider>(context, listen: false).findById(tweet.id);
+    // mainContextTweet.toggleLike(token);
   }
 
   @override
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final tweet = Provider.of<Tweet>(context);
+    final bytes = base64.decode(tweet.author.pictureThumb);
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       child: Padding(
@@ -67,7 +69,10 @@ class TweetItem extends StatelessWidget {
               child: Container(
                 child: CircleAvatar(
                   backgroundColor: Colors.grey,
-                  // child: Image.network(tweet.author.pictureThumb),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(25),
+                    child: Image.memory(bytes),
+                  ),
                   radius: 25,
                 ),
                 margin: EdgeInsets.only(right: 15),
@@ -83,7 +88,7 @@ class TweetItem extends StatelessWidget {
                         children: <Widget>[
                           Container(
                             child: Text(
-                              'Author Name',
+                              tweet.author.name,
                               style: Theme.of(context).textTheme.display2,
                             ),
                             margin: EdgeInsets.only(right: 7),
