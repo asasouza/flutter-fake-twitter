@@ -115,7 +115,6 @@ class AuthProvider extends ChangeNotifier {
     }
     final userData =
         json.decode(storage.getString(Constants.storageAuthKey)) as Map<String, Object>;
-
     _userToken = userData['token'];
     _userId = userData['id'];
     notifyListeners();

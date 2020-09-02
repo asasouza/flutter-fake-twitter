@@ -66,7 +66,7 @@ class Tweet extends ChangeNotifier {
             User(
               bio: user['bio'],
               following: user['isFollowing'],
-              id: user['id'],
+              id: user['_id'],
               name: user['name'],
               picture: user['picture'],
               pictureThumb: user['pictureThumb'],

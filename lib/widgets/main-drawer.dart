@@ -1,4 +1,6 @@
 // flutter
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // providers
@@ -8,10 +10,10 @@ import '../providers/user.dart';
 import '../helpers/colors.dart';
 
 class MainDrawer extends StatelessWidget {
-  
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
+    final bytes = base64.decode(user.pictureThumb);
     return Drawer(
       child: Container(
         color: Theme.of(context).primaryColor,
@@ -24,8 +26,9 @@ class MainDrawer extends StatelessWidget {
                     CircleAvatar(
                       radius: 35,
                       backgroundColor: ColorsHelper.darkGray,
-                      child: Image.network(
-                        user.picture,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(35),
+                        child: Image.memory(bytes),
                       ),
                     ),
                     SizedBox(height: 15),
@@ -113,9 +116,13 @@ class MainDrawer extends StatelessWidget {
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       dense: true,
-                      leading: Icon(Icons.exit_to_app, color: Colors.white,),
+                      leading: Icon(
+                        Icons.exit_to_app,
+                        color: Colors.white,
+                      ),
                       onTap: () {
-                        Provider.of<AuthProvider>(context, listen: false).logout();
+                        Provider.of<AuthProvider>(context, listen: false)
+                            .logout();
                       },
                       title: Text(
                         'Logout',

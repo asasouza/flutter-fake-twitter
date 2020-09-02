@@ -44,7 +44,7 @@ class User extends ChangeNotifier {
           createdAt: DateTime.parse(userData['createdAt']),
           followersCount: userData['followersCount'],
           followingCount: userData['followingCount'],
-          id: userData['id'],
+          id: userData['_id'],
           following: false,
           name: userData['name'],
           picture: userData['picture'],

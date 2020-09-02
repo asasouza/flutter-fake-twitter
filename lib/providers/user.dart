@@ -104,13 +104,15 @@ class UserProvider extends ChangeNotifier {
       if (!storage.containsKey(Constants.storageUserKey)) {
         return;
       }
-      final data = json.decode(storage.getString(Constants.storageUserKey));
-      _bio = data['bio'];
-      _id = data['id'];
-      _name = data['name'];
-      _picture = data['picture'];
-      _pictureThumb = data['pictureThumb'];
-      _username = data['username'];
+      final userData = json.decode(storage.getString(Constants.storageUserKey));
+      _bio = userData['bio'];
+      _name = userData['name'];
+      _picture = userData['picture'];
+      _pictureThumb = userData['pictureThumb'];
+      _username = userData['username'];
+    
+      final authData = json.decode(storage.getString(Constants.storageAuthKey));
+      _id = authData['id'];
 
       notifyListeners();
     });
