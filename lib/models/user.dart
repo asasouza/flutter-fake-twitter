@@ -13,8 +13,8 @@ class User extends ChangeNotifier {
   final String id;
   bool following;
   final String name;
-  final String picture;
-  final String pictureThumb;
+  String picture;
+  String pictureThumb;
   final int tweetsCount;
   final String username;
 

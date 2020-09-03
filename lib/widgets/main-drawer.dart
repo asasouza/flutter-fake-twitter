@@ -1,15 +1,26 @@
 // flutter
 import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // providers
 import '../providers/auth.dart';
 import '../providers/user.dart';
+// models
+import '../models/user.dart';
+// screens
+import '../screens/profile.dart';
 // helpers
 import '../helpers/colors.dart';
 
 class MainDrawer extends StatelessWidget {
+
+  void _navigateProfile(BuildContext context, User user) {
+    if (ModalRoute.of(context).settings.name != ProfileScreen.routeName) {
+      Navigator.of(context)
+          .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
@@ -48,7 +59,7 @@ class MainDrawer extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Text(
-                          '789',
+                          user.followingCount.toString(),
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
@@ -58,7 +69,7 @@ class MainDrawer extends StatelessWidget {
                                 color: ColorsHelper.darkGray, fontSize: 18)),
                         SizedBox(width: 15),
                         Text(
-                          '696',
+                          user.followersCount.toString(),
                           style: TextStyle(
                               fontSize: 18, fontWeight: FontWeight.bold),
                         ),
@@ -90,6 +101,7 @@ class MainDrawer extends StatelessWidget {
                         color: ColorsHelper.darkGray,
                         size: 35,
                       ),
+                      onTap: () => _navigateProfile(context, user),
                       title: Text('Profile', style: TextStyle(fontSize: 18)),
                     )
                   ],
@@ -105,14 +117,6 @@ class MainDrawer extends StatelessWidget {
               Padding(
                 child: Column(
                   children: <Widget>[
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      dense: true,
-                      title: Text(
-                        'Settings and privacy',
-                        style: TextStyle(fontSize: 18),
-                      ),
-                    ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       dense: true,

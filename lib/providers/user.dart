@@ -13,26 +13,14 @@ import '../helpers/http.dart';
 
 class UserProvider extends ChangeNotifier {
   final String authToken;
-  String _bio;
-  String _id;
-  String _name;
-  String _picture;
-  String _pictureThumb;
-  String _username;
+  User _user;
 
   UserProvider({this.authToken}) {
     populateDataFromStorage();
   }
 
   User get user {
-    return User(
-      bio: _bio,
-      id: _id,
-      name: _name,
-      picture: _picture,
-      pictureThumb: _pictureThumb,
-      username: _username,
-    );
+    return _user;
   }
 
   Future<bool> updateUserInfo({
@@ -46,11 +34,14 @@ class UserProvider extends ChangeNotifier {
     ).then((response) {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        _bio = data['bio'];
-        _name = data['name'];
-        _picture = data['picture'];
-        _pictureThumb = data['pictureThumb'];
-        _username = data['username'];
+        _user = User(
+          bio: data['bio'],
+          id: _user.id,
+          name: data['name'],
+          picture: data['picture'],
+          pictureThumb: data['pictureThumb'],
+          username: data['username'],
+        );
         SharedPreferences.getInstance().then((storage) {
           storage.setString(
               Constants.storageUserKey,
@@ -79,17 +70,17 @@ class UserProvider extends ChangeNotifier {
     ).then((response) {
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        _picture = data['picture'];
-        _pictureThumb = data['pictureThumb'];
+        _user.picture = data['picture'];
+        _user.pictureThumb = data['pictureThumb'];
         SharedPreferences.getInstance().then((storage) {
           storage.setString(
               Constants.storageUserKey,
               json.encode({
-                'bio': _bio,
-                'name': _name,
-                'picture': _picture,
-                'pictureThumb': _pictureThumb,
-                'username': _username,
+                'bio': _user.bio,
+                'name': _user.name,
+                'picture': _user.picture,
+                'pictureThumb': _user.pictureThumb,
+                'username': _user.username,
               }));
         });
         notifyListeners();
@@ -105,16 +96,21 @@ class UserProvider extends ChangeNotifier {
         return;
       }
       final userData = json.decode(storage.getString(Constants.storageUserKey));
-      _bio = userData['bio'];
-      _name = userData['name'];
-      _picture = userData['picture'];
-      _pictureThumb = userData['pictureThumb'];
-      _username = userData['username'];
-    
       final authData = json.decode(storage.getString(Constants.storageAuthKey));
-      _id = authData['id'];
-
+      _user = User(
+        bio: userData['bio'],
+        id: authData['id'],
+        name: userData['name'],
+        picture: userData['picture'],
+        pictureThumb: userData['pictureThumb'],
+        username: userData['username'],
+      );
       notifyListeners();
+
+      _user.fetchInfo(authToken: authToken).then((User user) {
+        _user = user;
+        notifyListeners();
+      });
     });
   }
 }

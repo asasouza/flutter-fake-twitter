@@ -146,13 +146,16 @@ class ProfileHeader extends StatelessWidget {
             children: <Widget>[
               Row(
                 children: <Widget>[
-                  CircleAvatar(
-                    backgroundColor: Colors.grey,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(45),
-                      child: Image.memory(bytes),
+                  GestureDetector(
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(45),
+                        child: Image.memory(bytes),
+                      ),
+                      radius: 45,
                     ),
-                    radius: 45,
+                    onTap: () => print('go settings image'),
                   ),
                   if (user != null && user.id != userLogged.id)
                     Container(
@@ -162,7 +165,16 @@ class ProfileHeader extends StatelessWidget {
                         outline: !user.following,
                       ),
                       width: 120,
-                    )
+                    ),
+                  if (user != null && user.id == userLogged.id)
+                    Container(
+                      child: RoundedButton(
+                        label: 'Edit Profile',
+                        onPress: () => print('go settings user'),
+                        outline: true,
+                      ),
+                      width: 120,
+                    ),
                 ],
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
               ),
