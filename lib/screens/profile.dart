@@ -13,6 +13,9 @@ import '../models/user.dart';
 import '../providers/auth.dart';
 import '../providers/tweet.dart';
 import '../providers/user.dart';
+// screens
+import '../screens/settings/name-description.dart';
+import '../screens/settings/picture.dart';
 // helpers
 import '../helpers/colors.dart';
 
@@ -135,6 +138,26 @@ class ProfileHeader extends StatelessWidget {
     return 'Member since $date';
   }
 
+  _navigateToSettingsNameDescription(BuildContext context, User user) {
+    Navigator.of(context).pushNamed(
+      SettingsNameBioScreen.routeName,
+      arguments: {
+        'editMode': true,
+        'user': user,
+      },
+    );
+  }
+
+  _navigateToSettingsPicture(BuildContext context, User user) {
+    Navigator.of(context).pushNamed(
+      SettingsPictureScreen.routeName,
+      arguments: {
+        'editMode': true,
+        'user': user,
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userLogged = Provider.of<UserProvider>(context, listen: false).user;
@@ -155,7 +178,7 @@ class ProfileHeader extends StatelessWidget {
                       ),
                       radius: 45,
                     ),
-                    onTap: () => print('go settings image'),
+                    onTap: () => _navigateToSettingsPicture(context, user),
                   ),
                   if (user != null && user.id != userLogged.id)
                     Container(
@@ -170,7 +193,8 @@ class ProfileHeader extends StatelessWidget {
                     Container(
                       child: RoundedButton(
                         label: 'Edit Profile',
-                        onPress: () => print('go settings user'),
+                        onPress: () =>
+                            _navigateToSettingsNameDescription(context, user),
                         outline: true,
                       ),
                       width: 120,

@@ -1,4 +1,6 @@
 // flutter
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -54,6 +56,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context, listen: false).user;
+    final bytes = base64Decode(user.pictureThumb);
     return ScaffoldContainer(
       appBar: AppBar(
         actions: <Widget>[
@@ -80,7 +83,10 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
                 children: <Widget>[
                   CircleAvatar(
                     backgroundColor: ColorsHelper.darkGray,
-                    child: Image.network(user.picture),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20),
+                      child: Image.memory(bytes),
+                    ),
                     radius: 20,
                   ),
                   Form(

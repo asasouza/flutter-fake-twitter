@@ -1,5 +1,7 @@
 // dart
+import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 // flutter
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,8 @@ import '../../widgets/scaffold-container.dart';
 import '../../widgets/logo.dart';
 import '../../widgets/rounded-button.dart';
 import '../../widgets/text-button.dart';
+// models
+import '../../models/user.dart';
 // screens
 import '../home.dart';
 // providers
@@ -26,21 +30,42 @@ class SettingsPictureScreen extends StatefulWidget {
 
 class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
   File _image;
+  String _imageBase64;
   bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final args =
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final bool editMode = args != null ? args['editMode'] : false;
+      final User user = args != null ? args['user'] : null;
+      if (editMode) {
+        setState(() {
+          _imageBase64 = user.picture;
+        });
+      }
+    });
+  }
 
   void _pickImage() async {
     final image = await ImagePicker.pickImage(
       source: ImageSource.gallery,
       imageQuality: 85,
     );
+    List<int> imageBytes = await image.readAsBytes();
+    String base64 = base64Encode(imageBytes);
     if (image != null) {
       setState(() {
         _image = image;
+        _imageBase64 = base64;
       });
     }
   }
 
-  void _onSubmit() async {
+  void _onSubmit(bool editMode) async {
     if (_image != null) {
       setState(() {
         _isLoading = true;
@@ -55,17 +80,35 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
         _isLoading = false;
       });
 
-      if(updated) {
-        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+      if (updated) {
+        if (editMode) {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final bool editMode = args != null ? args['editMode'] : false;
+    final bytes = _imageBase64 != null ? base64Decode(_imageBase64) : null;
     return ScaffoldContainer(
       appBar: AppBar(
-        title: Logo(),
+        centerTitle: !editMode,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: editMode
+            ? Text(
+                'Edit Picture',
+                style: Theme.of(context).textTheme.title.copyWith(fontSize: 22),
+              )
+            : Logo(),
       ),
       body: Center(
         child: Column(
@@ -75,7 +118,7 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      'Pick a profile picture',
+                      'Update your profile picture',
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 33,
@@ -100,7 +143,7 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                       child: InkWell(
                         child: DottedBorder(
                           borderType: BorderType.RRect,
-                          child: this._image == null
+                          child: this._imageBase64 == null
                               ? Column(
                                   children: <Widget>[
                                     Icon(
@@ -122,8 +165,8 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                                   ],
                                 )
                               : ClipRRect(
-                                  child: Image.file(
-                                    this._image,
+                                  child: Image.memory(
+                                    bytes,
                                     fit: BoxFit.cover,
                                     height: 186,
                                     width: 193,
@@ -133,7 +176,7 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
                                 ),
                           color: ColorsHelper.lightBlue,
                           dashPattern: [15],
-                          padding: this._image == null
+                          padding: this._imageBase64 == null
                               ? EdgeInsets.symmetric(
                                   horizontal: 60,
                                   vertical: 40,
@@ -154,26 +197,30 @@ class _SettingsPictureScreenState extends State<SettingsPictureScreen> {
             Container(
               child: Row(
                 children: <Widget>[
-                  SizedBox(
-                    child: TextButton(
-                      label: 'Skip for now',
-                      onPress: () {
-                        Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
-                      },
+                  if (!editMode)
+                    SizedBox(
+                      child: TextButton(
+                        label: 'Skip for now',
+                        onPress: () {
+                          Navigator.of(context)
+                              .pushReplacementNamed(HomeScreen.routeName);
+                        },
+                      ),
+                      width: 100,
                     ),
-                    width: 100,
-                  ),
                   SizedBox(
                     child: RoundedButton(
                       disabled: this._image == null,
                       isLoading: this._isLoading,
-                      label: 'Next',
-                      onPress: this._onSubmit,
+                      label: editMode ? 'Save' : 'Next',
+                      onPress: () => this._onSubmit(editMode),
                     ),
                     width: 80,
                   ),
                 ],
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: editMode
+                    ? MainAxisAlignment.end
+                    : MainAxisAlignment.spaceBetween,
               ),
               decoration: BoxDecoration(
                 border: Border(

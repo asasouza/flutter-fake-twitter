@@ -7,6 +7,8 @@ import '../../widgets/logo.dart';
 import '../../widgets/scaffold-container.dart';
 import '../../widgets/text-button.dart';
 import '../../widgets/text-input.dart';
+// models
+import '../../models/user.dart';
 // screens
 import './picture.dart';
 // providers
@@ -34,16 +36,38 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
     },
   };
   bool _isLoading = false;
+  TextEditingController _bioController;
+  TextEditingController _nameController;
 
   bool get _isValid {
     return _formData['bio']['isValid'] && _formData['name']['isValid'];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final args =
+          ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+      final bool editMode = args != null ? args['editMode'] : false;
+      final User user = args != null ? args['user'] : null;
+      if (editMode) {
+        _formData['bio']['value'] = user.bio;
+        _formData['name']['value'] = user.name;
+        _formData['bio']['isValid'] = true;
+        _formData['name']['isValid'] = true;
+        _bioController = TextEditingController(text: user.bio);
+        _nameController = TextEditingController(text: user.name);
+        setState(() {});
+      }
+    });
   }
 
   void _saveInputValue(String input, dynamic value) {
     _formData[input]['value'] = value;
   }
 
-  void _onSubmit() async {
+  void _onSubmit(bool editMode) async {
     if (_isValid) {
       setState(() {
         _isLoading = true;
@@ -55,8 +79,13 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
         bio: _formData['bio']['value'],
         name: _formData['name']['value'],
       );
-      if(updated) {
-        Navigator.of(context).pushReplacementNamed(SettingsPictureScreen.routeName);
+      if (updated) {
+        if (editMode) {
+          Navigator.of(context).pop();
+        } else {
+          Navigator.of(context)
+              .pushReplacementNamed(SettingsPictureScreen.routeName);
+        }
       }
       setState(() {
         _isLoading = false;
@@ -66,9 +95,22 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final args =
+        ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
+    final bool editMode = args != null ? args['editMode'] : false;
     return ScaffoldContainer(
       appBar: AppBar(
-        title: Logo(),
+        centerTitle: !editMode,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: editMode
+            ? Text(
+                'Edit Profile',
+                style: Theme.of(context).textTheme.title.copyWith(fontSize: 22),
+              )
+            : Logo(),
       ),
       body: Column(
         children: <Widget>[
@@ -78,7 +120,7 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
                 child: Column(
                   children: <Widget>[
                     Text(
-                      'Describe yourself',
+                      editMode ? 'Update your info' : 'Describe yourself',
                       style: TextStyle(
                         fontFamily: 'Roboto',
                         fontSize: 33,
@@ -102,6 +144,7 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
                       child: Column(
                         children: <Widget>[
                           TextInput(
+                            controller: editMode ? _nameController : null,
                             onChanged: (value) =>
                                 this._saveInputValue('name', value),
                             onFieldSubmitted: (_) {
@@ -125,12 +168,13 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
                             height: 15,
                           ),
                           TextInput(
+                            controller: editMode ? _bioController : null,
                             focusNode: this._bioFocus,
                             maxLength: 160,
                             multiLine: true,
                             onChanged: (value) =>
                                 this._saveInputValue('bio', value),
-                            onFieldSubmitted: (_) => this._onSubmit(),
+                            onFieldSubmitted: (_) => this._onSubmit(editMode),
                             placeholder: 'Your bio',
                             validator: (String value) {
                               String error;
@@ -158,26 +202,30 @@ class _SettingsNameBioScreenState extends State<SettingsNameBioScreen> {
           Container(
             child: Row(
               children: <Widget>[
-                SizedBox(
-                  child: TextButton(
-                    label: 'Skip for now',
-                    onPress: () {
-                      Navigator.of(context).pushReplacementNamed(SettingsPictureScreen.routeName);
-                    },
+                if (!editMode)
+                  SizedBox(
+                    child: TextButton(
+                      label: 'Skip for now',
+                      onPress: () {
+                        Navigator.of(context).pushReplacementNamed(
+                            SettingsPictureScreen.routeName);
+                      },
+                    ),
+                    width: 100,
                   ),
-                  width: 100,
-                ),
                 SizedBox(
                   child: RoundedButton(
                     disabled: !this._isValid,
                     isLoading: this._isLoading,
-                    label: 'Next',
-                    onPress: this._onSubmit,
+                    label: editMode ? 'Save' : 'Next',
+                    onPress: () => this._onSubmit(editMode),
                   ),
                   width: 80,
                 ),
               ],
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: editMode
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.spaceBetween,
             ),
             decoration: BoxDecoration(
               border: Border(
