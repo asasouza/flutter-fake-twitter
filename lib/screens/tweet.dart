@@ -14,6 +14,7 @@ import '../models/user.dart';
 // providers
 import '../providers/auth.dart';
 import '../providers/tweet.dart';
+import '../providers/user.dart';
 // screens
 import '../screens/profile.dart';
 // helpers
@@ -45,7 +46,8 @@ class _TweetScreenState extends State<TweetScreen> {
   }
 
   void fetchLikes(Tweet tweet) {
-    tweet.fetchLikes(0, 9999).then((likes) {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    tweet.fetchLikes(0, 9999, authToken: auth.token).then((likes) {
       setState(() {
         tweetLikes = likes;
         loadingLikes = false;
@@ -53,12 +55,12 @@ class _TweetScreenState extends State<TweetScreen> {
     });
   }
 
-  void _navigateProfile(BuildContext context, User user) {
+  void _navigateProfile(User user) {
     Navigator.of(context)
         .pushNamed(ProfileScreen.routeName, arguments: {'user': user});
   }
 
-  void _toggleLike(Tweet tweet, String token, BuildContext context) {
+  void _toggleLike(Tweet tweet, String token) {
     tweet.toggleLike(token);
     final mainContextTweet =
         Provider.of<TweetProvider>(context, listen: false).findById(tweet.id);
@@ -128,7 +130,7 @@ class _TweetScreenState extends State<TweetScreen> {
                       )
                     ],
                   ),
-                  onTap: () => this._navigateProfile(context, tweet.author),
+                  onTap: () => this._navigateProfile(tweet.author),
                 ),
                 Container(
                   alignment: Alignment.topLeft,
@@ -207,7 +209,7 @@ class _TweetScreenState extends State<TweetScreen> {
                                 size: 25,
                               ),
                         onTap: () =>
-                            this._toggleLike(tweet, auth.token, context),
+                            this._toggleLike(tweet, auth.token),
                       ),
                     ),
                     Container(

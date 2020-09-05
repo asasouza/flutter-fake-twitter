@@ -36,7 +36,7 @@ class UserProvider extends ChangeNotifier {
         final data = json.decode(response.body);
         _user = User(
           bio: data['bio'],
-          id: _user.id,
+          id: data['_id'],
           name: data['name'],
           picture: data['picture'],
           pictureThumb: data['pictureThumb'],

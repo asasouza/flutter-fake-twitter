@@ -53,10 +53,10 @@ class Tweet extends ChangeNotifier {
     });
   }
 
-  Future<List<User>> fetchLikes(int offset, int limit) {
+  Future<List<User>> fetchLikes(int offset, int limit, { String authToken }) {
     final url =
         '${Constants.baseURL}/tweets/$id/likes?offset=$offset&limit=$limit';
-    return HttpHelper.get(url).then((response) {
+    return HttpHelper.get(url, token: authToken).then((response) {
       final List<User> loadedLikes = [];
       if (response.statusCode == 200) {
         final decodedResponse =

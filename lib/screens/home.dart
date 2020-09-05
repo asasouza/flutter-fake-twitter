@@ -181,29 +181,31 @@ class EmptyList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'Welcome to Twitter!',
-              style: Theme.of(context).textTheme.title,
-            ),
-            SizedBox(height: 20),
-            Text(
-              'This is the best place to see what\'s happening in your world. Find some people and topics to follow now.',
-              style: Theme.of(context).textTheme.display1,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20),
-            SizedBox(
-              child: RoundedButton(label: 'Let\'s go', onPress: _navigate),
-              width: 100,
-            )
-          ],
+    return Expanded(
+          child: Center(
+        child: Padding(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Welcome to Twitter!',
+                style: Theme.of(context).textTheme.title,
+              ),
+              SizedBox(height: 20),
+              Text(
+                'This is the best place to see what\'s happening in your world. Find some people and topics to follow now.',
+                style: Theme.of(context).textTheme.display1,
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 20),
+              SizedBox(
+                child: RoundedButton(label: 'Let\'s go', onPress: _navigate),
+                width: 100,
+              )
+            ],
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 50),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 50),
       ),
     );
   }
