@@ -45,7 +45,7 @@ class User extends ChangeNotifier {
           followersCount: userData['followersCount'],
           followingCount: userData['followingCount'],
           id: userData['_id'],
-          following: false,
+          following: userData['isFollowing'],
           name: userData['name'],
           picture: userData['picture'],
           pictureThumb: userData['pictureThumb'],
@@ -58,8 +58,22 @@ class User extends ChangeNotifier {
   }
 
   void toggleFollow(String authToken) {
-    this.following = !this.following;
-    this.followersCount++;
+    final oldFollowing = following;
+    final oldFollowersCount = followersCount;
+    final url =
+        '${Constants.baseURL}/users/$id/${following ? 'unfollow' : 'follow'}';
+    followersCount = following ? followersCount - 1 : followersCount + 1;
+    following= !following;
     notifyListeners();
+    HttpHelper.put(
+      url,
+      token: authToken,
+    ).then((response) {
+      if (response.statusCode >= 400) {
+        followersCount = oldFollowersCount;
+        following = oldFollowing;
+        notifyListeners();
+      }
+    });
   }
 }

@@ -1,5 +1,6 @@
 // flutter
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -76,6 +77,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return _fetchTweets(userId);
   }
 
+  void _toggleFollow() {
+    final auth = Provider.of<AuthProvider>(context, listen: false);
+    _user.toggleFollow(auth.token);
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     final args =
@@ -109,7 +116,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Container(
         child: TweetList(
-          header: ProfileHeader(user: _user, preloadedUser: preloadedUser),
+          header: ProfileHeader(
+            user: _user,
+            preloadedUser: preloadedUser,
+            toggleFollow: _toggleFollow,
+          ),
           moreResults: _moreResults,
           noContent: Text('No content'),
           onRefresh: () => _refreshTweets(preloadedUser.id),
@@ -123,14 +134,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
 }
 
 class ProfileHeader extends StatelessWidget {
-  const ProfileHeader({
+  ProfileHeader({
     Key key,
     @required this.user,
     @required this.preloadedUser,
+    @required this.toggleFollow,
   }) : super(key: key);
 
+  Uint8List bytes;
   final User user;
   final User preloadedUser;
+  final Function toggleFollow;
 
   _renderMemberSince(DateTime createdAt) {
     final DateFormat dateFormatter = DateFormat('MMMM yyyy');
@@ -138,7 +152,7 @@ class ProfileHeader extends StatelessWidget {
     return 'Member since $date';
   }
 
-  _navigateToSettingsNameDescription(BuildContext context, User user) {
+  void _navigateToSettingsNameDescription(BuildContext context, User user) {
     Navigator.of(context).pushNamed(
       SettingsNameBioScreen.routeName,
       arguments: {
@@ -148,7 +162,7 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
-  _navigateToSettingsPicture(BuildContext context, User user) {
+  void _navigateToSettingsPicture(BuildContext context, User user) {
     Navigator.of(context).pushNamed(
       SettingsPictureScreen.routeName,
       arguments: {
@@ -158,10 +172,17 @@ class ProfileHeader extends StatelessWidget {
     );
   }
 
+  void _navigateToContacts(BuildContext context, User user, String type) {
+    print('navigate to - $type');
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final userLogged = Provider.of<UserProvider>(context, listen: false).user;
-    final bytes = base64.decode(preloadedUser.picture);
+    if (bytes == null) {
+      bytes = base64.decode(preloadedUser.picture);
+    }
     return Column(
       children: <Widget>[
         Padding(
@@ -184,7 +205,7 @@ class ProfileHeader extends StatelessWidget {
                     Container(
                       child: RoundedButton(
                         label: user.following ? 'Unfollow' : 'Follow',
-                        onPress: () => user.toggleFollow(''),
+                        onPress: this.toggleFollow,
                         outline: !user.following,
                       ),
                       width: 120,
@@ -248,30 +269,44 @@ class ProfileHeader extends StatelessWidget {
               if (user != null)
                 Row(
                   children: <Widget>[
-                    Text(
-                      'following',
-                      style: Theme.of(context)
-                          .textTheme
-                          .display3
-                          .copyWith(fontSize: 16),
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      user.followingCount.toString(),
-                      style: Theme.of(context).textTheme.display2,
+                    GestureDetector(
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            'following',
+                            style: Theme.of(context)
+                                .textTheme
+                                .display3
+                                .copyWith(fontSize: 16),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            user.followingCount.toString(),
+                            style: Theme.of(context).textTheme.display2,
+                          ),
+                        ],
+                      ),
+                      onTap: () => _navigateToContacts(context, user, 'following'),
                     ),
                     SizedBox(width: 20),
-                    Text(
-                      user.followersCount.toString(),
-                      style: Theme.of(context).textTheme.display2,
-                    ),
-                    SizedBox(width: 5),
-                    Text(
-                      'followers',
-                      style: Theme.of(context)
-                          .textTheme
-                          .display3
-                          .copyWith(fontSize: 16),
+                    GestureDetector(
+                      child: Row(
+                        children: <Widget>[
+                          Text(
+                            user.followersCount.toString(),
+                            style: Theme.of(context).textTheme.display2,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            'followers',
+                            style: Theme.of(context)
+                                .textTheme
+                                .display3
+                                .copyWith(fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      onTap: () => _navigateToContacts(context, user, 'followers'),
                     ),
                   ],
                   crossAxisAlignment: CrossAxisAlignment.center,

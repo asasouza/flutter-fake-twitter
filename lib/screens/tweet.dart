@@ -1,6 +1,7 @@
 // flutter
 import 'dart:convert';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -27,11 +28,12 @@ class TweetScreen extends StatefulWidget {
 }
 
 class _TweetScreenState extends State<TweetScreen> {
+  Uint8List bytes;
   final DateFormat dateFormatter = DateFormat('HH:mm • d MMM yy');
   bool loadingLikes = true;
   final NumberFormat numberFormatter = NumberFormat('##,###');
-  List<User> tweetLikes = [];
   static final numberRetweets = Random().nextInt(100);
+  List<User> tweetLikes = [];
 
   @override
   void initState() {
@@ -75,7 +77,9 @@ class _TweetScreenState extends State<TweetScreen> {
     final args =
         ModalRoute.of(context).settings.arguments as Map<String, dynamic>;
     final tweet = args['tweet'] as Tweet;
-    final bytes = base64.decode(tweet.author.pictureThumb);
+    if (bytes == null) {
+      bytes = base64.decode(tweet.author.pictureThumb);
+    }
     return ScaffoldContainer(
       appBar: AppBar(
         centerTitle: false,

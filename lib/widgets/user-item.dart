@@ -1,5 +1,6 @@
 // flutter
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +15,8 @@ import '../providers/user.dart';
 import '../screens/profile.dart';
 
 class UserItem extends StatelessWidget {
+  Uint8List bytes;
+
   void _toggleFollow(BuildContext context) {
     final user = Provider.of<User>(context, listen: false);
     final auth = Provider.of<AuthProvider>(context, listen: false);
@@ -29,7 +32,9 @@ class UserItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final user = Provider.of<User>(context);
     final userLogged = Provider.of<UserProvider>(context, listen: false).user;
-    final bytes = base64.decode(user.pictureThumb);
+    if (bytes == null) {
+      bytes = base64.decode(user.pictureThumb);
+    }
     return Padding(
       child: Row(
         children: <Widget>[

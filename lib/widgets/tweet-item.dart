@@ -40,6 +40,7 @@ class TweetItem extends StatelessWidget {
   static final random = new Random();
   final int numberComments = random.nextInt(100);
   final int numberRetweets = random.nextInt(100);
+  Uint8List bytes;
 
   void _navigateProfile(BuildContext context, User user) {
     if (ModalRoute.of(context).settings.name != ProfileScreen.routeName) {
@@ -59,7 +60,9 @@ class TweetItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final auth = Provider.of<AuthProvider>(context, listen: false);
     final tweet = Provider.of<Tweet>(context);
-    final bytes = base64.decode(tweet.author.pictureThumb);
+    if (bytes == null) {
+      bytes = base64.decode(tweet.author.pictureThumb);
+    }
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       child: Padding(

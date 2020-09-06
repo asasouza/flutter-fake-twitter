@@ -1,5 +1,6 @@
 // flutter
 import 'dart:convert';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 // providers
@@ -13,6 +14,7 @@ import '../screens/profile.dart';
 import '../helpers/colors.dart';
 
 class MainDrawer extends StatelessWidget {
+  Uint8List bytes;
 
   void _navigateProfile(BuildContext context, User user) {
     if (ModalRoute.of(context).settings.name != ProfileScreen.routeName) {
@@ -24,7 +26,9 @@ class MainDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context).user;
-    final bytes = base64.decode(user.pictureThumb);
+    if (bytes == null) {
+      bytes = base64.decode(user.pictureThumb);
+    }
     return Drawer(
       child: Container(
         color: Theme.of(context).primaryColor,
