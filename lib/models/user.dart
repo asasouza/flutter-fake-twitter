@@ -32,7 +32,7 @@ class User extends ChangeNotifier {
     @required this.username,
   });
 
-  Future<User> fetchInfo({ String authToken }) {
+  Future<User> fetchInfo({String authToken}) {
     final url = '${Constants.baseURL}/users/$id';
     return HttpHelper.get(url, token: authToken).then((response) {
       if (response.statusCode == 200) {
@@ -57,13 +57,43 @@ class User extends ChangeNotifier {
     });
   }
 
+  Future<List<User>> fetchContacts({
+    String authToken,
+    String type = 'following',
+    int offset = 0,
+    int limit = 9999,
+  }) {
+    final url =
+        '${Constants.baseURL}/users/$id/$type?offset=$offset&limit=$limit';
+    return HttpHelper.get(url, token: authToken).then((response) {
+      final List<User> contacts = [];
+      if (response.statusCode == 200) {
+        final decodedResponse =
+            json.decode(response.body) as Map<String, dynamic>;
+        decodedResponse[type].forEach((user) {
+          contacts.add(User(
+            bio: user['bio'],
+            id: user['_id'],
+            following: user['isFollowing'],
+            name: user['name'],
+            picture: user['picture'],
+            pictureThumb: user['pictureThumb'],
+            username: user['username'],
+          ));
+        });
+      }
+      print(contacts);
+      return contacts;
+    });
+  }
+
   void toggleFollow(String authToken) {
     final oldFollowing = following;
     final oldFollowersCount = followersCount;
     final url =
         '${Constants.baseURL}/users/$id/${following ? 'unfollow' : 'follow'}';
     followersCount = following ? followersCount - 1 : followersCount + 1;
-    following= !following;
+    following = !following;
     notifyListeners();
     HttpHelper.put(
       url,

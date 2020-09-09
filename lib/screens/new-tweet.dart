@@ -1,5 +1,6 @@
 // flutter
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,6 +29,7 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
   double _contentSize = 0;
   bool _isLoading = false;
   bool _isValid = false;
+  Uint8List bytes;
 
   void _saveInputValue(String input, dynamic value) {
     _formData[input] = value;
@@ -56,7 +58,9 @@ class _NewTweetScreenState extends State<NewTweetScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserProvider>(context, listen: false).user;
-    final bytes = base64Decode(user.pictureThumb);
+    if (bytes == null) {
+      bytes = base64Decode(user.pictureThumb);
+    }
     return ScaffoldContainer(
       appBar: AppBar(
         actions: <Widget>[

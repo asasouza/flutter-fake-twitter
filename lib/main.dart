@@ -4,6 +4,7 @@ import 'package:flutter_fake_twitter/providers/tweet.dart';
 // packages
 import 'package:provider/provider.dart';
 // screens
+import './screens/contacts.dart';
 import './screens/home.dart';
 import './screens/login.dart';
 import './screens/settings/name-description.dart';
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
                   future: auth.autoLogin(),
                 ),
           routes: {
+            ContactsScreen.routeName: (_) => ContactsScreen(),
             HomeScreen.routeName: (_) => HomeScreen(),
             NewTweetScreen.routeName: (_) => NewTweetScreen(),
             ProfileScreen.routeName: (_) => ChangeNotifierProvider(

@@ -15,6 +15,7 @@ import '../providers/auth.dart';
 import '../providers/tweet.dart';
 import '../providers/user.dart';
 // screens
+import '../screens/contacts.dart';
 import '../screens/settings/name-description.dart';
 import '../screens/settings/picture.dart';
 // helpers
@@ -173,7 +174,10 @@ class ProfileHeader extends StatelessWidget {
   }
 
   void _navigateToContacts(BuildContext context, User user, String type) {
-    print('navigate to - $type');
+    Navigator.of(context).pushNamed(ContactsScreen.routeName, arguments: {
+      'initialTab': type,
+      'user': user,
+    });
   }
 
 
