@@ -82,7 +82,6 @@ class User extends ChangeNotifier {
           ));
         });
       }
-      print(contacts);
       return contacts;
     });
   }

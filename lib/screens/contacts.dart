@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 // widgets
 import '../widgets/scaffold-container.dart';
+import '../widgets/user-list.dart';
 // models
 import '../models/user.dart';
 // constants
@@ -55,8 +56,8 @@ class ContactsScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: <Widget>[
-            Text('Seguindo'),
-            Text('Seguidores'),
+            UserList(type: 'following', user: user,),
+            UserList(type: 'followers', user: user,),
           ],
         ),
       ),
