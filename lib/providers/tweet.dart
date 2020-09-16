@@ -41,7 +41,7 @@ class TweetProvider extends ChangeNotifier {
           ),
           content: decodedResponse['tweet']['content'],
           createdAt: DateTime.parse(decodedResponse['tweet']['createdAt']),
-          id: decodedResponse['tweet']['id'],
+          id: decodedResponse['tweet']['_id'],
           likesCount: 0,
           updatedAt: DateTime.parse(decodedResponse['tweet']['updatedAt']),
         );

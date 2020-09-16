@@ -22,8 +22,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Widget> _tabRoutes;
-
   int _selectedTab = 0;
   int _offset = 0;
   final _limit = 10;
@@ -36,17 +34,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Provider.of<UserProvider>(context, listen: false).populateDataFromStorage();
 
     _fetchTweets();
-
-    _tabRoutes = [
-      // TweetList(
-      //   onScroll: fetchTweets,
-      //   moreResults: _moreResults,
-      //   noContent: EmptyList(() {
-      //     _onTabChange(1);
-      //   }),
-      // ),
-      Text('Search'),
-    ];
   }
 
   Future<Null> _fetchTweets() {
@@ -88,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
         fullscreenDialog: true,
       ),
     );
-    if (result) {
+    if (result == true) {
       Scaffold.of(context)
         ..removeCurrentSnackBar()
         ..showSnackBar(
