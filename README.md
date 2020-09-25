@@ -17,6 +17,14 @@ Obs: outras funcionalidades presentes no Twitter, como comentários e _re-tweets
 
 ### Demo
 
+<center>
+
+![exemplo do app funcionando](./example_images/signup.gif)
+![exemplo do app funcionando](./example_images/tweet.gif)
+![exemplo do app funcionando](./example_images/navigation.gif)
+
+</center>
+
 
 __Veja também__: [Node Fake Twitter](https://github.com/asasouza/node-fake-twitter), uma API escrita com Node + Express, utilizada por este App, para replicar o funcionamento do Twitter.
     
